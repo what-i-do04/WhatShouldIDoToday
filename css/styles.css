@@ -868,6 +868,11 @@ html.intro-on,html.intro-on body{overflow:hidden}
 .intro-stage i.c{border-radius:50%}
 .intro-stage i.p{border-radius:28%}
 .intro-stage.in i{transform:var(--to)!important;opacity:1}
+.intro-stage i::after{content:"";position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .9s ease;transition-delay:var(--wd,0s)}
+.intro-stage.white i::after{opacity:1}
+.intro-glow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(1.04);filter:blur(28px);opacity:0;transition:opacity 3.5s ease;pointer-events:none}
+.intro-stage.glow .intro-glow{opacity:.55}
+.intro-stage.white .intro-glow{opacity:.8;transition-duration:1.6s}
 .intro-stage.fade{-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 33%,#000 66%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,transparent 33%,#000 66%,#000 100%);-webkit-mask-size:300% 100%;mask-size:300% 100%;animation:introFade 1.8s ease-in-out forwards}
 @keyframes introFade{from{-webkit-mask-position:100% 0;mask-position:100% 0}to{-webkit-mask-position:0 0;mask-position:0 0}}
 .intro-enter{position:relative;z-index:1;font:500 13px/1 var(--sans);letter-spacing:.42em;padding:14px 4px 14px 10px;color:var(--paper);border-bottom:1px solid rgba(242,240,234,.5);opacity:0;transform:translateY(6px);transition:opacity 1.2s ease,transform 1.2s var(--ease),border-color .3s}

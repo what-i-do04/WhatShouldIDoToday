@@ -6,7 +6,7 @@
      실제 서비스에서는 같은 규칙을 서버(DB 정책, 예: Supabase RLS)에서 다시 검사해야 해요.
    ========================================================= */
 window.OS = (function () {
-  var KEY = 'os-proto-state-v3', MAX_CURRENT = 5; // 진행 중 전시는 동시에 최대 5개
+  var KEY = 'os-proto-state-v4', MAX_CURRENT = 5; // 진행 중 전시는 동시에 최대 5개
   var DB, session = { userId: null, demo: false }, uploads = {}; // uploads: 업로드한 이미지 미리보기(메모리에만)
 
   function fresh() { return JSON.parse(JSON.stringify(window.OS_DATA)); }
@@ -35,9 +35,9 @@ window.OS = (function () {
     /* 오픈 갤러리 공개 목록: 오픈 갤러리 작품(space: gallery) 중 published 만. 전시 작품은 절대 섞이지 않음 */
     publicWorks: function () { return DB.works.filter(function (w) { return w.space === 'gallery' && w.status === 'published'; }); },
     worksBy: function (uid, includeHidden) { return DB.works.filter(function (w) { return w.space === 'gallery' && w.artistId === uid && (includeHidden || w.status === 'published'); }).sort(byNew); },
-    /* 전시 작품: 공개 예정 전시는 앞의 2점만 미리 공개 */
+    /* 전시 작품: 공개 예정 전시의 작품은 전시가 열리기 전까지 보이지 않음 (SOON 은 소개만) */
     exWorksBy: function (uid) { return DB.works.filter(function (w) { return w.space === 'exhibition' && w.artistId === uid && Q.exVisible(w); }); },
-    exVisible: function (w) { var e = Q.exhibition(w.exhibitionId); if (!e) return false; if (e.status !== 'upcoming') return true; return Q.exWorks(e.id).slice(0, 2).indexOf(w) > -1; },
+    exVisible: function (w) { var e = Q.exhibition(w.exhibitionId); if (!e) return false; return e.status !== 'upcoming'; },
     workHref: function (w) { return w.space === 'exhibition' ? '#/exhibitions/' + w.exhibitionId + '/works/' + w.id : '#/works/' + w.id; },
     currentCount: function (exceptId) { return DB.exhibitions.filter(function (e) { return e.status === 'current' && e.id !== exceptId; }).length; },
     exWorks: function (exId) {

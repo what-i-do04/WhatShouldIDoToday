@@ -825,3 +825,27 @@ main:focus{outline:none}
 .exw-cnote{margin:-8px 0 20px}
 .exw .related{border-top:1px solid var(--ln)}
 .exb-head .link{justify-self:start}
+
+/* ── v0.3.1: 소리 버튼 · SOON 전시 소개 ── */
+.sndbtn{display:inline-flex;align-items:center;gap:12px;margin-top:18px;padding:10px 16px 10px 12px;border:1px solid currentColor;border-radius:999px;font:inherit;color:inherit;background:transparent;cursor:pointer;text-align:left;line-height:1.25}
+.sndbtn span{display:grid}.sndbtn b{font-size:13px;font-weight:600}.sndbtn small{font-size:11px;opacity:.7;letter-spacing:.02em}
+.sndbtn:hover{background:rgba(128,128,128,.12)}
+.sndbtn.on{background:var(--fg,var(--paper));color:var(--bg,var(--obsidian));border-color:var(--fg,var(--paper))}
+.sndbtn.full{display:flex;width:100%;margin:0;border-radius:0;padding:14px 16px}
+.sndbtn.cover{margin:0 0 22px}
+.room-cap .sndbtn{margin:16px 0 4px}
+.vcap .sndbtn{margin:0}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;width:16px;height:14px;flex:none}
+.eq i{display:block;width:3px;height:30%;background:currentColor}
+.sndbtn.on .eq i{animation:eq .9s ease-in-out infinite alternate}
+.sndbtn.on .eq i:nth-child(2){animation-delay:-.3s}.sndbtn.on .eq i:nth-child(3){animation-delay:-.6s}
+@keyframes eq{from{height:20%}to{height:100%}}
+@media (prefers-reduced-motion:reduce){.sndbtn.on .eq i{animation:none;height:70%}}
+.ddaytxt{display:inline-block;margin-right:6px;padding:2px 8px;background:var(--fg);color:var(--bg);font-size:12px;letter-spacing:.1em}
+.exstory{padding:clamp(56px,8vw,120px) 0;border-top:1px solid var(--ln)}
+.exstory-g{display:grid;grid-template-columns:1fr 2fr;gap:clamp(24px,5vw,96px)}
+.exstory .prose p{font-size:17px;line-height:1.95;max-width:36em;color:var(--fg)}
+.exstory .prose p+p{margin-top:1.1em}
+.exstory .soon-note{margin-top:32px!important;font-size:14px!important;color:var(--sub)!important;padding-top:20px;border-top:1px solid var(--ln)}
+@media (max-width:860px){.exstory-g{grid-template-columns:1fr}}
+.soon-snd{margin-top:18px}

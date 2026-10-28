@@ -90,6 +90,12 @@ function ExhibitionCard(e, variant, ratio) {
   return '<a class="excard rv ' + (variant || '') + '" href="#/exhibitions/' + e.id + '">' + Img(e.coverImage, { w: wh.w, h: wh.h, ratio: ratio, alt: e.title + ' 대표 이미지' }) +
     '<div class="meta label muted"><span>' + st + '</span>' + (th ? '<span>' + th.en + '</span>' : '') + '</div><h3>' + esc(e.title) + '</h3><div class="ko">' + esc(e.subtitle) + (artists ? ' · ' + artists : '') + '</div><div class="per muted">' + period(e) + '</div></a>'; }
 
+/* ── 소리 재생 버튼: key 는 'w:작품id' 또는 'e:전시id' ── */
+var EQ = '<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>';
+function SoundButton(key, spec, cls) { if (!spec) return ''; var on = OS_SOUND.playing(key);
+  return '<button class="sndbtn' + (on ? ' on' : '') + (cls ? ' ' + cls : '') + '" data-act="sound" data-key="' + key + '" aria-pressed="' + on + '">' + EQ + '<span><b>' + (on ? '소리 끄기' : '소리 듣기') + '</b><small>' + esc(spec.label || 'Sound') + '</small></span></button>'; }
+function soundOf(key) { var k = key.split(':'), x = k[0] === 'w' ? Q.work(k[1]) : Q.exhibition(k[1]); return x && x.sound; }
+
 /* ── 작품 카드 ── */
 function SaveButton(w, variant) { var on = OS.A.isSaved(w.id);
   return '<button class="savebtn ' + (variant || '') + (on ? ' on' : '') + '" data-act="save" data-id="' + w.id + '" aria-pressed="' + on + '" aria-label="' + esc(w.title) + (on ? ' 저장 취소' : ' 저장') + '">' + IC.save + (variant === 'full' ? '<span>' + (on ? '저장됨' : '저장') + '</span>' : '') + '</button>'; }

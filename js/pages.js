@@ -53,11 +53,11 @@ P.exhibitions = function () {
 function dday(d) { var n = Math.round((new Date(d) - new Date(Q.db().today)) / 864e5); return n > 0 ? 'D-' + n : n === 0 ? 'D-DAY' : ''; }
 P.soon = function () {
   var up = Q.db().exhibitions.filter(function (e) { return e.status === 'upcoming'; }).sort(function (a, b) { return a.startDate < b.startDate ? -1 : 1; });
-  return PageHead('Soon · 공개 예정 전시', 'Soon', '곧 문을 여는 전시. 공개 전에 작품 일부를 미리 볼 수 있어요.') +
-    '<section class="sec tight"><div class="wrap">' + (up.length ? '<div class="soonlist">' + up.map(function (e) { var th = e.theme ? Q.theme(e.theme) : null, pre = Q.exWorks(e.id).slice(0, 2), artists = Q.exArtists(e.id).map(function (u) { return esc(u.nickname); }).join(', ');
+  return PageHead('Soon · 공개 예정 전시', 'Soon', '곧 문을 여는 전시. 작품은 전시가 열릴 때 공개하고, 지금은 컨셉과 기획 의도, 전시 이야기를 먼저 소개해요.') +
+    '<section class="sec tight"><div class="wrap">' + (up.length ? '<div class="soonlist">' + up.map(function (e) { var th = e.theme ? Q.theme(e.theme) : null, artists = Q.exArtists(e.id).map(function (u) { return esc(u.nickname); }).join(', ');
       return '<article class="soon rv"><a class="soon-img" href="#/exhibitions/' + e.id + '" tabindex="-1" aria-hidden="true">' + Img(e.coverImage, { w: 900, h: 600, ratio: '3/2', alt: '' }) + '<span class="dday">' + dday(e.startDate) + '</span></a>' +
         '<div class="soon-txt"><div class="label muted">' + dot(e.startDate) + ' 오픈' + (th ? ' · ' + th.en : '') + '</div><h2 class="ttl t-' + e.type + '"><a href="#/exhibitions/' + e.id + '">' + esc(e.title) + '</a></h2><div class="ko">' + esc(e.subtitle) + ' · ' + artists + '</div><p>' + esc(e.description) + '</p>' +
-        (pre.length ? '<div class="soon-pre"><span class="label muted">Preview · 미리 보기 ' + pre.length + '점</span><div>' + pre.map(function (w) { return '<a href="' + Q.workHref(w) + '" title="' + esc(w.title) + '">' + Img(Q.imageOf(w), { w: 200, h: 200, ratio: '1/1', alt: w.title }) + '</a>'; }).join('') + '</div></div>' : '') +
+        (e.sound ? '<p class="label muted soon-snd">♪ 소리가 있는 전시예요</p>' : '') +
         '<a class="link" href="#/exhibitions/' + e.id + '">전시 미리 보기 <span class="ar">→</span></a></div></article>'; }).join('') + '</div>'
       : EmptyState('공개 예정 전시가 없어요', '새 전시가 정해지면 이곳에 소개할게요.')) + '</div></section>';
 };
@@ -68,23 +68,25 @@ P.exhibition = function (id) {
     st = { current: '진행 중', upcoming: '공개 예정', past: '종료된 전시 · 아카이브 기록' }[e.status],
     rel = Q.db().exhibitions.filter(function (x) { return x.id !== e.id && (x.theme && x.theme === e.theme); });
   if (rel.length < 3) rel = rel.concat(Q.db().exhibitions.filter(function (x) { return x.id !== e.id && rel.indexOf(x) < 0 && x.status === 'current'; })).slice(0, 3);
-  var shown = e.status === 'upcoming' ? ws.slice(0, 2) : ws;
+  var soon = e.status === 'upcoming', shown = soon ? [] : ws;
   var h = '<article class="exd mood-' + e.mood + '">' +
     '<section class="excover"><div class="bg">' + Img(e.coverImage, { w: 1600, h: 1000, alt: e.title + ' 대표 이미지' }) + '</div><div class="wrap excover-in">' +
     (e.status === 'past' ? '<a class="back" href="#/archive">← 아카이브</a>' : e.status === 'upcoming' ? '<a class="back" href="#/soon">← 공개 예정 전시</a>' : '<a class="back" href="#/exhibitions">← 진행 중인 전시</a>') +
-    '<div class="label">' + st + (th ? ' · ' + th.en + ' ' + th.label : '') + ' · ' + e.kind + '</div><h1 class="display t-' + e.type + '">' + esc(e.title) + '</h1><p class="exsub">' + esc(e.subtitle) + '</p><p class="exper">' + period(e) + '</p>' +
+    '<div class="label">' + st + (th ? ' · ' + th.en + ' ' + th.label : '') + ' · ' + e.kind + '</div><h1 class="display t-' + e.type + '">' + esc(e.title) + '</h1><p class="exsub">' + esc(e.subtitle) + '</p><p class="exper">' + (soon ? '<b class="ddaytxt">' + dday(e.startDate) + '</b> ' : '') + period(e) + '</p>' + SoundButton('e:' + e.id, e.sound, 'cover') +
     (shown.length ? '<button class="link" data-act="viewer" data-ex="' + e.id + '" data-i="0">몰입형으로 감상하기 <span class="ar">→</span></button>' : '') + '</div></section>' +
     '<section class="exintro"><div class="wrap exintro-g"><div class="stmt rv"><div class="label muted">기획 의도 · Curatorial Statement</div><blockquote>' + esc(e.curatorStatement) + '</blockquote></div>' +
-    '<div class="exdesc rv"><div class="label muted">전시 소개</div><p>' + esc(e.description) + '</p><dl class="amd"><div><dt>기간</dt><dd>' + period(e) + '</dd></div><div><dt>주제</dt><dd>' + (th ? th.en + ' · ' + th.label : '주제 없음') + '</dd></div>' +
-    '<div><dt>참여 작가</dt><dd>' + artists.length + '명</dd></div><div><dt>작품</dt><dd>' + ws.length + '점</dd></div></dl></div></div></section>';
-  h += '<section class="rooms" id="works" aria-label="작품 감상">' + (e.status === 'upcoming' ? '<div class="wrap">' + DemoNote('공개 예정 전시예요. ' + ws.length + '점 중 ' + shown.length + '점을 미리 보여드려요.').replace('DEMO', 'PREVIEW') + '</div>' : '') +
+    '<div class="exdesc rv"><div class="label muted">' + (soon ? '컨셉 · Concept' : '전시 소개') + '</div><p>' + esc(e.description) + '</p><dl class="amd"><div><dt>기간</dt><dd>' + period(e) + '</dd></div><div><dt>주제</dt><dd>' + (th ? th.en + ' · ' + th.label : '주제 없음') + '</dd></div>' +
+    '<div><dt>참여 작가</dt><dd>' + (soon ? artists.map(function (u) { return esc(u.nickname); }).join(', ') : artists.length + '명') + '</dd></div>' + (soon ? '' : '<div><dt>작품</dt><dd>' + ws.length + '점</dd></div>') + '</dl></div></div></section>';
+  if (soon) h += '<section class="exstory"><div class="wrap exstory-g"><div class="label muted rv">전시 이야기 · Story</div><div class="prose rv">' + String(e.story || e.description).split('\n').filter(Boolean).map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') +
+    '<p class="soon-note">작품은 ' + dot(e.startDate) + ' 전시가 열리면 공개돼요.</p></div></div></section>';
+  else h += '<section class="rooms" id="works" aria-label="작품 감상">' +
     (shown.length ? shown.map(function (w, i) { var u = Q.user(w.artistId), wh = ratioWH(w.ratio);
       return '<div class="room r' + (i % 3) + ' rv"><div class="wrap room-g"><button class="room-img" data-act="viewer" data-ex="' + e.id + '" data-i="' + i + '" aria-label="' + esc(w.title) + ' 크게 보기">' + Img(Q.imageOf(w), { w: wh.w * 2, h: wh.h * 2, ratio: w.ratio, alt: w.title }) + '<span class="zoom">' + IC.expand + '</span></button>' +
         '<div class="room-cap"><span class="idx">' + ('0' + (i + 1)).slice(-2) + ' <i>/ ' + ('0' + shown.length).slice(-2) + '</i></span><h2>' + esc(w.title) + '</h2><div class="who">' + UserLink(u) + '</div><div class="label muted">' + lbl('field', w.field) + ' · ' + lbl('medium', w.medium) + ' · ' + w.createdAt.slice(0, 4) + '</div>' +
-        '<p>' + esc(w.description) + '</p><a class="link" href="' + Q.workHref(w) + '">작품 이야기 · 감상 ' + Q.comments(w.id).length + ' <span class="ar">→</span></a></div></div></div>'; }).join('')
+        '<p>' + esc(w.description) + '</p>' + SoundButton('w:' + w.id, w.sound) + '<a class="link" href="' + Q.workHref(w) + '">작품 이야기 · 감상 ' + Q.comments(w.id).length + ' <span class="ar">→</span></a></div></div></div>'; }).join('')
       : '<div class="wrap">' + EmptyState('아직 걸린 작품이 없어요', '작품이 공개되면 이곳에 전시돼요.') + '</div>') + '</section>';
   h += '<section class="sec tight exartists"><div class="wrap"><h2 class="h3">참여 작가</h2><div class="alist">' + artists.map(function (u) { var f = Q.field(u.field);
-    return '<a class="aitem" href="#/artists/' + u.id + '">' + Img(u.profileImage, { w: 160, h: 160, ratio: '1/1' }) + '<span><b>' + esc(u.nickname) + '</b> ' + FeaturedArtistBadge(u, true) + '<br><span class="muted">' + (f ? f.label : '') + ' · 전시 작품 ' + ws.filter(function (w) { return w.artistId === u.id; }).length + '점</span></span><span class="ar">→</span></a>'; }).join('') + '</div></div></section>';
+    return '<a class="aitem" href="#/artists/' + u.id + '">' + Img(u.profileImage, { w: 160, h: 160, ratio: '1/1' }) + '<span><b>' + esc(u.nickname) + '</b> ' + FeaturedArtistBadge(u, true) + '<br><span class="muted">' + (f ? f.label : '') + (soon ? ' · 공개 예정' : ' · 전시 작품 ' + ws.filter(function (w) { return w.artistId === u.id; }).length + '점') + '</span></span><span class="ar">→</span></a>'; }).join('') + '</div></div></section>';
   h += '<section class="sec tight related"><div class="wrap"><h2 class="h3">관련 전시</h2><div class="relgrid">' + rel.map(function (x) { return ExhibitionCard(x, '', '4/3'); }).join('') + '</div></div></section></article>';
   return h;
 };
@@ -105,7 +107,7 @@ P.exWork = function (exId, wid) {
     '<div class="label muted">' + ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + list.length).slice(-2) + ' · ' + esc(e.title) + (e.status === 'upcoming' ? ' · Preview' : e.status === 'past' ? ' · Archive' : '') + '</div><h1 class="wtitle">' + esc(w.title) + '</h1>' +
     '<div class="wartist">' + Img(u.profileImage, { w: 80, h: 80, ratio: '1/1', cls: 'mini' }) + '<div>' + UserLink(u) + '<div class="muted">' + (Q.field(u.field) ? Q.field(u.field).label : '') + ' · 전시 작가</div></div>' + FollowButton(u, 'sm') + '</div>' +
     '<div class="wtext"><p class="exw-lead">' + esc(w.description) + '</p><h2 class="label muted">작품 이야기 · Story</h2>' + String(w.story || '').split('\n').filter(Boolean).map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div></div>' +
-    '<aside class="wside">' + SaveButton(w, 'full') + ArtworkMetadata(w) +
+    '<aside class="wside">' + SoundButton('w:' + w.id, w.sound, 'full') + SaveButton(w, 'full') + ArtworkMetadata(w) +
     '<div class="wex"><div class="label muted">이 작품이 걸린 전시</div><a href="#/exhibitions/' + e.id + '">' + esc(e.title) + ' <span class="muted">' + esc(e.subtitle) + ' · ' + period(e) + '</span></a></div></aside></div>' +
     '<div class="wrap exw-nav">' + nav(prev, 'prev') + nav(next, 'next') + '</div></section>' +
     '<section class="sec tight comments" id="comments"><div class="wrap cwrap"><h2 class="h3">감상 <span class="muted">' + Q.comments(w.id).length + '</span></h2><p class="muted small exw-cnote">이 전시 작품에 남긴 감상이에요. 오픈 갤러리와는 따로 모여요.</p>' + CommentForm(w.id) + CommentList(w.id) + '</div></section>';
@@ -143,7 +145,7 @@ P.work = function (id) {
     '<section class="wbody"><div class="wrap wgrid"><div class="wmain"><div class="label muted">' + lbl('field', w.field) + (w.theme ? ' · ' + Q.theme(w.theme).en : '') + '</div><h1 class="wtitle">' + esc(w.title) + '</h1>' +
     '<div class="wartist">' + Img(u.profileImage, { w: 80, h: 80, ratio: '1/1', cls: 'mini' }) + '<div>' + UserLink(u) + '<div class="muted">' + (Q.field(u.field) ? Q.field(u.field).label : '') + ' · 팔로워 ' + Q.followers(u.id) + '</div></div>' + FollowButton(u, 'sm') + '</div>' +
     '<div class="wtext"><h2 class="label muted">작품 설명</h2><p>' + esc(w.description || '—') + '</p>' + (w.intent ? '<h2 class="label muted">제작 의도</h2><p class="intent">' + esc(w.intent) + '</p>' : '') + '</div></div>' +
-    '<aside class="wside">' + SaveButton(w, 'full') + (own ? '<a class="btn ghost" href="#/works/' + w.id + '/edit">작품 수정 · 관리</a>' : '') + ArtworkMetadata(w) + '</aside></div></section>' +
+    '<aside class="wside">' + SoundButton('w:' + w.id, w.sound, 'full') + SaveButton(w, 'full') + (own ? '<a class="btn ghost" href="#/works/' + w.id + '/edit">작품 수정 · 관리</a>' : '') + ArtworkMetadata(w) + '</aside></div></section>' +
     '<section class="sec tight comments" id="comments"><div class="wrap cwrap"><h2 class="h3">감상 <span class="muted">' + Q.comments(w.id).length + '</span></h2>' + CommentForm(w.id) + CommentList(w.id) + '</div></section>';
   if (more.length) h += '<section class="sec tight"><div class="wrap"><div class="subhead"><h2 class="h3">' + esc(u.nickname) + '의 다른 작품</h2><a class="link" href="#/artists/' + u.id + '">프로필 보기 <span class="ar">→</span></a></div><div class="row4">' + more.map(function (x) { return ArtworkCard(x, { ratio: '4/5' }); }).join('') + '</div></div></section>';
   if (rel.length) h += '<section class="sec tight paper"><div class="wrap"><div class="subhead"><h2 class="h3">관련 작품</h2><p class="muted">같은 주제나 분야의 작품</p></div><div class="row4">' + rel.map(function (x) { return ArtworkCard(x, { ratio: '4/5' }); }).join('') + '</div></div></section>';

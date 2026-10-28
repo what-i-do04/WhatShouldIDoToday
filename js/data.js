@@ -250,6 +250,27 @@ window.OS_DATA = (function () {
   X('x35', 'night-bloom', 'Moth Garden', 'u12', 'illust', 'dreams', 'drawing', 'garden', 155, '1/1', '2024-10-25',
     '불빛을 찾아 모여든 나방의 정원.', '정원 한가운데의 작은 등불을 향해 나방들이 모여든다. 작가는 \'빛을 향하는 마음\'을 그렸다고 말한다.');
 
+  X('x36', 'halftone-weather', '맑음, 망점 12%', 'u03', 'graphic', 'nature', 'digital', 'halftone', 161, '3/4', '2025-02-10',
+    '맑은 날의 하늘을 망점 12%로 인쇄한 포스터.',
+    '강지우는 석 달 동안 매일 아침 하늘을 보고, 그날의 날씨를 망점의 밀도로 기록했다. 맑은 날은 12%, 흐린 날은 40%를 넘었다.\n이 작업은 그중 가장 맑았던 날의 기록이다. 종이의 흰 부분이 대부분을 차지해, 포스터 자체가 하늘처럼 비어 보인다.');
+  X('x37', 'halftone-weather', '소나기', 'u03', 'graphic', 'nature', 'digital', 'halftone', 162, '4/5', '2025-02-18',
+    '갑자기 쏟아진 비를 굵은 망점으로 옮겼다.',
+    '오후 3시에 시작해 20분 만에 그친 소나기를 1분 단위로 기록했다. 빗줄기가 굵어질수록 망점도 커진다.\n포스터 아래쪽으로 갈수록 점이 작아지는 것은 비가 그쳐가던 마지막 5분이다.');
+  X('x38', 'halftone-weather', '안개 주의보', 'u03', 'graphic', 'nature', 'digital', 'blocks', 163, '3/4', '2025-03-02',
+    '안개 주의보가 내린 날, 글자를 모두 흐리게 지운 경고문.',
+    '실제 기상청 안개 주의보 문구를 그대로 조판한 뒤, 가시거리에 맞춰 글자를 지웠다. 가시거리 200m일 때 남은 글자는 열두 개였다.\n읽히지 않는 경고문이 오히려 안개를 가장 정확하게 설명한다.');
+  X('x39', 'loud-letters', 'ㅂ의 비명', 'u03', 'graphic', 'identity', 'digital', 'blocks', 164, '4/5', '2024-04-12',
+    '가장 크게 소리 내는 자음을 화면 가득 키운 포스터.',
+    '강지우의 첫 개인전 대표작이다. 한글 자음을 하나씩 소리 내어 데시벨을 쟀고, 가장 크게 나온 ㅂ을 화면 끝까지 키웠다.\n글자의 크기를 소리의 크기로 정한다는 생각은 이후 Low Frequency 연작으로 이어졌다.');
+  X('x40', 'loud-letters', 'Volume 11', 'u03', 'graphic', 'identity', 'digital', 'halftone', 165, '3/4', '2024-04-25',
+    '최대 볼륨을 넘어선 문장.', '볼륨 다이얼의 최대값 10을 넘긴 11단계 문장을 망점으로 표현했다. 점이 겹쳐 글자끼리 서로 번진다.');
+
+  /* 소리가 있는 작품: sound 필드. 지금은 sound.js 가 만드는 임시 소리이고, 실제 음원 주소로 바꿀 수 있어요. */
+  [['x04', 'roomtone', 'Room Tone · 빈 방의 소음'], ['x13', 'lowfreq', '저주파 32Hz · 헤드폰을 권장해요'], ['x14', 'pings', '수신자 없는 신호'], ['x16', 'deadair', '방송 잡음과 7초의 정적'],
+   ['x21', 'forest', '숲의 소리'], ['x23', 'canopy', '나무 꼭대기의 소리']].forEach(function (a) {
+    works.forEach(function (w) { if (w.id === a[0]) w.sound = { gen: a[1], label: a[2] }; }); });
+  works.forEach(function (w) { if (w.id === 'w15') w.sound = { gen: 'waves', label: '파도 소리' }; });
+
   /* Exhibitions — status: current / upcoming / past
      진행 중(current) 전시는 동시에 최대 5개까지 열 수 있어요 (store.js MAX_CURRENT).
      mood: 전시마다 다른 시각적 분위기 (dark / paper / stone), type: 제목 서체 스타일 */
@@ -277,11 +298,14 @@ window.OS_DATA = (function () {
     { id: 'green-static', title: 'Green Static', subtitle: '초록의 잡음', theme: 'nature', kind: '기획 전시', mood: 'stone', type: 'sans',
       coverImage: { gen: 'horizon', seed: 118 }, startDate: '2026-11-20', endDate: '2027-02-28', status: 'upcoming',
       description: '자연의 소리와 풍경을 데이터와 노이즈로 다시 듣는 전시. 오리온과 문이호가 함께해요.',
-      curatorStatement: '자연은 조용하지 않다. 우리가 듣지 못할 뿐이다.' },
+      curatorStatement: '자연은 조용하지 않다. 우리가 듣지 못할 뿐이다.',
+      sound: { gen: 'forest', label: '전시 사운드 미리 듣기 · 숲의 소리' },
+      story: '설치 작가 오리온은 지난여름부터 가을까지 국립공원 세 곳에 마이크를 두고 숲의 소리를 녹음했다. 새벽의 새소리, 한낮의 바람, 밤의 풀벌레 소리가 한 계절 동안 쌓였다.\n그 소리를 주파수별로 나누자 숲은 하나의 거대한 잡음이 되었다. 오리온은 이 잡음을 초록빛 입자의 움직임으로 옮기고, 나무 꼭대기에 매단 스무 개의 마이크로 바람이 지나가는 길을 지도로 그렸다.\n사진가 문이호는 처음으로 도시를 떠나 안개 낀 숲에서 새벽을 기다렸다. 밤의 출구를 찍던 작가가 자연 속에서 찾은 \'빛이 들어오는 자리\'가 전시의 마지막 방을 채운다.\n전시장에서는 소리와 이미지가 함께 움직여요. 헤드폰을 쓰고 감상하기를 권해요.' },
     { id: 'tomorrow-residue', title: 'Tomorrow Residue', subtitle: '내일의 잔여물', theme: 'future', kind: '기획 전시', mood: 'paper', type: 'serif',
       coverImage: { gen: 'halftone', seed: 121 }, startDate: '2026-12-10', endDate: '2027-03-15', status: 'upcoming',
-      description: '아직 일어나지 않은 일의 흔적을 미리 기록하는 그래픽 전시.',
-      curatorStatement: '미래를 상상하는 일은 언제나 현재의 흔적을 남긴다.' },
+      description: '아직 일어나지 않은 일의 흔적을 미리 기록하는 그래픽 전시. 강지우의 세 번째 개인전.',
+      curatorStatement: '미래를 상상하는 일은 언제나 현재의 흔적을 남긴다.',
+      story: '강지우는 30일 동안 매일 밤, 다음 날 신문의 1면을 예측해 미리 인쇄했다. 아침이 되면 실제 신문을 사서 자신의 예측과 나란히 놓았다. 맞힌 날은 단 이틀이었다.\n틀린 예측들은 버려지지 않았다. 일어나지 않은 미래가 인쇄된 종이는 오히려 그날의 기대와 불안을 가장 정직하게 기록하고 있었다.\n전시는 예측과 실제를 마주 보게 걸고, 2030년부터 2099년까지의 날짜를 정리한 색인으로 끝난다. 아직 오지 않은 날들에 대한 지도다.' },
     { id: 'drift-memory', title: 'Drift Memory', subtitle: '흩어지는 기억', theme: 'memory', kind: '기획 전시', mood: 'dark', type: 'serif',
       coverImage: { gen: 'particles', seed: 19 }, startDate: '2026-05-01', endDate: '2026-07-31', status: 'past',
       description: '파티클 시뮬레이션으로 기억의 흩어짐을 표현한 디지털 아트 전시.',
@@ -298,6 +322,14 @@ window.OS_DATA = (function () {
       coverImage: { gen: 'fabric', seed: 37 }, startDate: '2025-09-01', endDate: '2025-10-31', status: 'past',
       description: '피부처럼 몸에 붙는 옷을 주제로 한 전시.',
       curatorStatement: '옷과 몸의 경계가 사라지는 지점.' },
+    { id: 'halftone-weather', title: 'Halftone Weather', subtitle: '망점 날씨', theme: 'nature', kind: '기획 전시', mood: 'stone', type: 'sans',
+      coverImage: { gen: 'halftone', seed: 161 }, startDate: '2025-03-01', endDate: '2025-05-31', status: 'past',
+      description: '석 달 동안의 날씨를 망점의 밀도로 기록한 그래픽 디자이너 강지우의 개인전.',
+      curatorStatement: '날씨는 매일 바뀌는 가장 큰 인쇄물이다.' },
+    { id: 'loud-letters', title: 'Loud Letters', subtitle: '큰 소리 글자', theme: 'identity', kind: '기획 전시', mood: 'paper', type: 'serif',
+      coverImage: { gen: 'blocks', seed: 164 }, startDate: '2024-05-01', endDate: '2024-07-31', status: 'past',
+      description: '소리의 크기로 글자의 크기를 정한 포스터 전시. 강지우의 첫 개인전.',
+      curatorStatement: '글자는 소리를 기억한다.' },
     { id: 'night-bloom', title: 'Night Bloom', subtitle: '밤에 피는 것들', theme: 'dreams', kind: '기획 전시', mood: 'dark', type: 'italic',
       coverImage: { gen: 'bloom', seed: 33 }, startDate: '2024-11-01', endDate: '2025-01-31', status: 'past',
       description: '밤과 꿈을 그린 일러스트레이션 전시.',

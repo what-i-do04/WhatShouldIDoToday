@@ -44,7 +44,7 @@ function navKey(seg) { if (seg[0] === 'exhibitions' && seg[1]) { var e = Q.exhib
 function route(opt) {
   opt = opt || {};
   var r = parseHash(), samePath = r.path === cur.path, y = scrollY;
-  stopHero(); closeMenu(); closeSearch(); closeModal(); closeViewer();
+  stopHero(); closeMenu(); closeSearch(); closeModal(); closeViewer(); if (!samePath) OS_SOUND.stop();
   if (r.seg[0] === 'login' && r.q.next) authBack = '#' + r.q.next;
   $('#main').innerHTML = render(r.seg, r.q);
   var enteringGallery = r.seg[0] === 'gallery' && !samePath;
@@ -98,11 +98,11 @@ function closeModal() { var m = $('#modal'); if (!m || m.hidden) return; m.hidde
 /* ── 몰입형 뷰어 ── */
 var vw = { list: [], i: 0 };
 function openViewer(list, i) { lastFocus = document.activeElement; vw = { list: list, i: i }; $('#viewer').hidden = false; lock(true); drawViewer(); $('#viewer [data-act="v-close"]').focus(); }
-function closeViewer() { var v = $('#viewer'); if (!v || v.hidden) return; v.hidden = true; v.innerHTML = ''; lock(false); if (lastFocus) lastFocus.focus(); }
-function drawViewer() { var w = vw.list[vw.i], u = Q.user(w.artistId), wh = ratioWH(w.ratio);
+function closeViewer() { var v = $('#viewer'); if (!v || v.hidden) return; OS_SOUND.stop(); v.hidden = true; v.innerHTML = ''; lock(false); if (lastFocus) lastFocus.focus(); }
+function drawViewer() { OS_SOUND.stop(); var w = vw.list[vw.i], u = Q.user(w.artistId), wh = ratioWH(w.ratio);
   $('#viewer').innerHTML = '<div class="vtop"><span class="label">' + ('0' + (vw.i + 1)).slice(-2) + ' / ' + ('0' + vw.list.length).slice(-2) + '</span><button class="tool" data-act="v-close" aria-label="닫기">' + IC.close + '</button></div>' +
     '<div class="vstage">' + Img(Q.imageOf(w), { w: wh.w * 3, h: wh.h * 3, ratio: w.ratio, alt: w.title, cls: 'vimg' }) + '</div>' +
-    '<div class="vcap"><div><h2>' + esc(w.title) + '</h2><span class="muted">' + esc(u.nickname) + ' · ' + lbl('field', w.field) + ' · ' + lbl('medium', w.medium) + '</span></div><p>' + esc(w.description) + '</p><a class="link" href="' + Q.workHref(w) + '">' + (w.space === 'exhibition' ? '작품 이야기' : '작품 상세') + ' <span class="ar">→</span></a></div>' +
+    '<div class="vcap"><div><h2>' + esc(w.title) + '</h2><span class="muted">' + esc(u.nickname) + ' · ' + lbl('field', w.field) + ' · ' + lbl('medium', w.medium) + '</span></div><p>' + esc(w.description) + '</p>' + SoundButton('w:' + w.id, w.sound) + '<a class="link" href="' + Q.workHref(w) + '">' + (w.space === 'exhibition' ? '작품 이야기' : '작품 상세') + ' <span class="ar">→</span></a></div>' +
     (vw.list.length > 1 ? '<button class="vnav prev" data-act="v-prev" aria-label="이전 작품">' + IC.prev + '</button><button class="vnav next" data-act="v-next" aria-label="다음 작품">' + IC.next + '</button>' : ''); }
 
 /* ── 스크롤 등장 ── */
@@ -141,8 +141,11 @@ document.addEventListener('click', function (e) {
     case 'follow': if (!OS.me()) return needLogin('follow', id); var fo = OS.A.toggleFollow(id); rerender(); toast(fo ? Q.user(id).nickname + '님을 팔로우했어요.' : '팔로우를 취소했어요.'); break;
     case 'del-comment': OS.A.deleteComment(id); rerender(); toast('감상을 삭제했어요.'); break;
     case 'viewer': var list, i = +(b.dataset.i || 0);
-      if (b.dataset.ex) { var ex = Q.exhibition(b.dataset.ex); list = Q.exWorks(ex.id); if (ex.status === 'upcoming') list = list.slice(0, 2); } else list = [Q.work(b.dataset.work)];
+      if (b.dataset.ex) { var ex = Q.exhibition(b.dataset.ex); list = Q.exWorks(ex.id); if (ex.status === 'upcoming') list = []; } else list = [Q.work(b.dataset.work)];
       if (list.length) openViewer(list, i); break;
+    case 'sound': var sk = b.dataset.key, was = OS_SOUND.playing(sk);
+      if (was) OS_SOUND.stop(); else if (!OS_SOUND.play(sk, soundOf(sk))) toast('이 브라우저에서는 소리를 재생할 수 없어요.');
+      $$('[data-act="sound"]').forEach(function (x) { var c = x.className.replace(/\b(sndbtn|on)\b/g, '').trim(); x.outerHTML = SoundButton(x.dataset.key, soundOf(x.dataset.key), c); }); break;
     case 'v-close': closeViewer(); break; case 'v-prev': vw.i = (vw.i - 1 + vw.list.length) % vw.list.length; drawViewer(); break; case 'v-next': vw.i = (vw.i + 1) % vw.list.length; drawViewer(); break;
     case 'archive': if (OS.A.setStatus(id, 'archived')) { toast('보관했어요. 공개 목록에서 숨겨지고, 마이페이지 “보관됨”에서 다시 볼 수 있어요.'); if (cur.seg[2] === 'edit') location.hash = '#/mypage/works?status=archived'; else rerender(); } break;
     case 'restore': if (OS.A.setStatus(id, 'published')) { toast('다시 공개했어요.'); rerender(); } break;

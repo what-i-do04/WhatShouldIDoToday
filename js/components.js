@@ -55,7 +55,8 @@ function Account() { var u = OS.me();
   return '<div class="acct"><button class="tool pill" data-act="acct" aria-haspopup="true" aria-expanded="false">' + esc(u.nickname) + (OS.Auth.isDemo() ? ' <span class="demo-tag">DEMO</span>' : '') + '</button>' +
     '<div class="acct-pop" id="acctPop" hidden><div class="who"><b>' + esc(u.nickname) + ' ' + FeaturedArtistBadge(u, true) + '</b><span>' + esc(u.email) + '</span><span class="role">' + OS.ROLE_LABEL[u.role] + ' · ' + OS.ROLE_EN[u.role] + '</span>' + (OS.Auth.isDemo() ? '<span class="demo-warn">데모 계정 · 실제 인증 아님</span>' : '') + '</div>' + AccountMenuItems() + '</div></div>'; }
 function Header() {
-  return '<div class="wrap">' + Logo({ slogan: false }) +
+  return '<div class="wrap"><div class="hstart">' + Logo({ slogan: false }) +
+    '<div class="histnav" role="group" aria-label="페이지 이동"><button class="tool" data-act="hist-back" aria-label="뒤로 가기" title="뒤로 가기" disabled>' + IC.prev + '</button><button class="tool" data-act="hist-fwd" aria-label="앞으로 가기" title="앞으로 가기" disabled>' + IC.next + '</button></div></div>' +
     '<nav class="nav" aria-label="주요 메뉴">' + NAV.map(function (n) { return '<a href="' + n.to + '" data-nav="' + n.to + '">' + n.t + '</a>'; }).join('') + '</nav>' +
     '<div class="tools"><button class="tool" data-act="search" aria-label="검색 열기">' + IC.search + '</button>' + Account() +
     '<button class="tool burger" data-act="menu" aria-label="메뉴 열기" aria-expanded="false">' + IC.menu + '</button></div></div>'; }

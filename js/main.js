@@ -54,15 +54,28 @@ function route(opt) {
   if (r.anchor) { var t = document.getElementById(r.anchor); if (t) setTimeout(function () { t.scrollIntoView(); }, 0); }
   else if (opt.keep || samePath) window.scrollTo(0, y); else window.scrollTo(0, 0);
   if (!opt.keep && !samePath) { var m = $('#main'); m.focus({ preventScroll: true }); }
-  headerState();
+  headerState(); histTrack();
   if (!r.seg.length) startHero();
   if (enteringGallery && !reduce) { var g = $('#gallery'); if (g && $('.masonry', g)) { var real = g.innerHTML; g.innerHTML = Skeleton(8); setTimeout(function () { if ($('#gallery') === g) { g.innerHTML = real; reveal(); } }, 420); } }
   if ($('[data-form="artwork"]')) updatePreview();
   reveal();
 }
 function rerender() { route({ keep: true }); }
-function chrome() { $('#hdr').innerHTML = Header(); $('#menu').innerHTML = Menu(); $('#ftr').innerHTML = Footer(); }
+function chrome() { $('#hdr').innerHTML = Header(); histButtons(); $('#menu').innerHTML = Menu(); $('#ftr').innerHTML = Footer(); }
 function headerState() { $('#hdr').classList.toggle('solid', !!cur.seg.length || scrollY > 40); }
+
+/* ── 뒤로 가기 · 앞으로 가기 ──
+   방문한 주소를 직접 기억해서 상단 버튼으로 오가요. 브라우저의 뒤로/앞으로 버튼을 써도 같은 목록을 따라가요. */
+var hist = { list: [], i: -1, jump: false };
+function histTrack() { var h = location.hash || '#/';
+  if (hist.jump) hist.jump = false;
+  else if (hist.list[hist.i] === h) {}
+  else if (hist.list[hist.i - 1] === h) hist.i--;
+  else if (hist.list[hist.i + 1] === h) hist.i++;
+  else { hist.list = hist.list.slice(0, hist.i + 1); hist.list.push(h); hist.i = hist.list.length - 1; }
+  histButtons(); }
+function histButtons() { var b = $('[data-act="hist-back"]'), f = $('[data-act="hist-fwd"]'); if (b) b.disabled = hist.i <= 0; if (f) f.disabled = hist.i >= hist.list.length - 1; }
+function histGo(d) { var n = hist.i + d; if (n < 0 || n >= hist.list.length) return; hist.i = n; hist.jump = true; location.hash = hist.list[n]; }
 
 /* ── 히어로 ── */
 var hi = 0, htimer = null, reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -121,6 +134,7 @@ document.addEventListener('click', function (e) {
   if (e.target.id === 'modal') return closeModal();
   var b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT') return; var a = b.dataset.act, id = b.dataset.id;
   switch (a) {
+    case 'hist-back': histGo(-1); break; case 'hist-fwd': histGo(1); break;
     case 'menu': openMenu(); break; case 'menu-close': closeMenu(); break;
     case 'search': openSearch(); break; case 'search-close': closeSearch(); break;
     case 'acct': var p = $('#acctPop'), o = p.hidden; p.hidden = !o; b.setAttribute('aria-expanded', o); break;

@@ -849,3 +849,12 @@ main:focus{outline:none}
 .exstory .soon-note{margin-top:32px!important;font-size:14px!important;color:var(--sub)!important;padding-top:20px;border-top:1px solid var(--ln)}
 @media (max-width:860px){.exstory-g{grid-template-columns:1fr}}
 .soon-snd{margin-top:18px}
+
+/* ── 상단 뒤로 · 앞으로 ── */
+.hstart{display:flex;align-items:center;gap:clamp(12px,2vw,24px)}
+.histnav{display:flex;gap:2px}
+.histnav .tool{min-width:32px;width:32px;height:32px;padding:0;border:1px solid var(--line-dark);border-radius:50%}
+.histnav .tool+.tool{margin-left:4px}
+.histnav .tool svg{width:15px;height:15px;stroke-width:1.6}
+.histnav .tool:disabled{opacity:.25;cursor:default}
+@media (max-width:420px){.hdr .logo .mark{letter-spacing:.2em;font-size:13px}.hstart{gap:10px}}

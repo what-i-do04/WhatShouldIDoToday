@@ -1,7 +1,7 @@
 /* =========================================================
    첫 화면 인트로
    검은 화면 → 작품 조각들이 앞쪽(관람객 쪽)에서 날아와 가운데로 모이며 OTHER SPACE 글자를 만듦
-   → 다 모이면 흰 글씨로 바뀌고(뒤에 흰 후광) → 그라데이션으로 서서히 사라짐 → 가운데에 '입장하기' 버튼 하나 → 누르면 홈 화면
+   (날아오는 조각마다 흰 후광, 크게 보이던 그림이 작아지며 칸이 됨) → 다 모이면 흰 글씨로 바뀌고 → 그라데이션으로 서서히 사라짐 → 가운데에 '입장하기' 버튼 하나 → 누르면 홈 화면
    - 이 탭에서 처음 HOME 으로 들어올 때 한 번만 보여요. 푸터의 '인트로 다시 보기'로 다시 볼 수 있어요.
    - 글자를 이루는 네모 칸마다 서로 다른 작품 사진이 들어가요 (images/intro/).
    ========================================================= */
@@ -39,20 +39,26 @@ window.OS_INTRO = (function () {
 
   function build(t, tex) {
     var cell = t.cell, stage = el.querySelector('.intro-stage'), html = '', s = cell - 1;
+    var W = innerWidth, H = innerHeight, R = Math.max(W, H);
+    var B = W < 500 ? 56 : W < 1100 ? 80 : 104;   /* 날아올 때의 그림 크기(px). 모이면서 칸 크기로 작아져요 */
+    var hw = t.canvas.width / 2, hh = t.canvas.height / 2;
     t.pts.forEach(function (p) {
       var ph = tex.length ? tex[Math.random() * tex.length | 0] : null,
-        img = ph ? 'background-image:url(' + ph + ');background-size:' + (rnd(100, 260) | 0) + '% auto;background-position:' + (rnd(0, 100) | 0) + '% ' + (rnd(0, 100) | 0) + '%;' : 'background:#8a8a84;';
-      /* 시작: 화면 앞쪽(z 큼) 사방에 흩어진 상태 */
-      var a = rnd(0, Math.PI * 2), d = rnd(0.35, 1.1) * Math.max(innerWidth, innerHeight);
-      var from = 'translate3d(' + (p.x + Math.cos(a) * d | 0) + 'px,' + (p.y + Math.sin(a) * d | 0) + 'px,' + (rnd(250, 820) | 0) + 'px) rotateX(' + (rnd(-80, 80) | 0) + 'deg) rotateY(' + (rnd(-80, 80) | 0) + 'deg) rotate(' + (rnd(-180, 180) | 0) + 'deg)';
-      var to = 'translate3d(' + (p.x - s / 2).toFixed(1) + 'px,' + (p.y - s / 2).toFixed(1) + 'px,0)';
+        img = ph ? 'background-image:url(' + ph + ');background-size:' + (rnd(100, 170) | 0) + '% auto;background-position:' + (rnd(0, 100) | 0) + '% ' + (rnd(0, 100) | 0) + '%;' : 'background:#8a8a84;';
+      /* 들어오는 방향: OTHER(왼쪽 절반)는 왼쪽·위·아래에서, SPACE(오른쪽 절반)는 오른쪽·위·아래에서 글자를 감싸듯이.
+         글자 안에서 위쪽에 있는 칸은 위에서, 아래쪽 칸은 아래에서 더 많이 들어와요. */
+      var left = p.x < 0, v = Math.max(-1, Math.min(1, p.y / hh)), side = Math.abs(p.x) / hw; /* side: 바깥쪽일수록 1 */
+      var a = left ? Math.PI - v * (Math.PI / 2) * (1.05 - side * 0.45) : v * (Math.PI / 2) * (1.05 - side * 0.45);
+      a += rnd(-0.35, 0.35);
+      var d = rnd(0.55, 1.05) * R;
+      var sc0 = rnd(0.9, 2.1), sc1 = (s / B).toFixed(4);
+      var from = 'translate3d(' + (p.x + Math.cos(a) * d - B / 2 | 0) + 'px,' + (p.y + Math.sin(a) * d - B / 2 | 0) + 'px,' + (rnd(80, 420) | 0) + 'px) rotateY(' + (rnd(-25, 25) | 0) + 'deg) rotate(' + (rnd(-28, 28) | 0) + 'deg) scale(' + sc0.toFixed(2) + ')';
+      var to = 'translate3d(' + (p.x - B / 2).toFixed(1) + 'px,' + (p.y - B / 2).toFixed(1) + 'px,0) scale(' + sc1 + ')';
       var dur = rnd(T.fly[0], T.fly[1]).toFixed(2), del = rnd(0, T.spread).toFixed(2),
-        wd = (((p.x + innerWidth / 2) / innerWidth) * 0.9 + rnd(0, 0.25)).toFixed(2); /* 흰색으로 바뀌는 순서: 왼쪽 → 오른쪽 */
-      html += '<i style="width:' + s + 'px;height:' + s + 'px;' + img + 'transform:' + (reduce ? to : from) + ';--to:' + to + ';--wd:' + wd + 's;transition-duration:' + dur + 's,.8s;transition-delay:' + del + 's,' + del + 's"></i>';
+        wd = (((p.x + W / 2) / W) * 0.9 + rnd(0, 0.25)).toFixed(2); /* 흰색으로 바뀌는 순서: 왼쪽 → 오른쪽 */
+      html += '<i style="width:' + B + 'px;height:' + B + 'px;' + img + 'transform:' + (reduce ? to : from) + ';--to:' + to + ';--wd:' + wd + 's;transition-duration:' + dur + 's,.8s,' + dur + 's;transition-delay:' + del + 's,' + del + 's,' + del + 's"></i>';
     });
-    /* 후광: 글자 모양을 흐리게 번진 흰 빛으로 뒤에 깔아요 */
-    var g = t.canvas; g.className = 'intro-glow';
-    stage.innerHTML = html; stage.insertBefore(g, stage.firstChild);
+    stage.innerHTML = html;
   }
 
   function play() {
@@ -67,9 +73,8 @@ window.OS_INTRO = (function () {
     preload(function (tex) {
       if (!el) return;
       build(t, tex);
-      if (reduce) { stage.classList.add('in', 'glow', 'white'); later(fadeWord, 1600); return; }
+      if (reduce) { stage.classList.add('in', 'white'); later(fadeWord, 1600); return; }
       requestAnimationFrame(function () { requestAnimationFrame(function () { stage.classList.add('in'); }); });
-      later(function () { stage.classList.add('glow'); }, 2600);   /* 조각이 거의 모일 즈음 후광이 서서히 */
       later(function () { stage.classList.add('white'); }, T.white); /* 다 모이면 흰 글씨로 */
       later(fadeWord, T.fade);
     });

@@ -17,7 +17,8 @@ function render(seg, q) {
   var a = seg[0] || '';
   switch (a) {
     case '': return P.home();
-    case 'exhibitions': return seg[1] ? (seg[2] ? P.notfound() : P.exhibition(seg[1])) : P.exhibitions(seg, q);
+    case 'exhibitions': return !seg[1] ? P.exhibitions(seg, q) : !seg[2] ? P.exhibition(seg[1]) : seg[2] === 'works' && seg[3] && !seg[4] ? P.exWork(seg[1], seg[3]) : P.notfound();
+    case 'soon': return seg[1] ? P.notfound() : P.soon();
     case 'gallery': return seg[1] ? P.notfound() : P.gallery(seg, q);
     case 'works': return !seg[1] ? P.notfound() : seg[2] === 'edit' ? P.workForm(seg[1]) : seg[2] ? P.notfound() : P.work(seg[1]);
     case 'upload': return P.workForm();
@@ -33,8 +34,12 @@ function render(seg, q) {
     default: return P.notfound();
   }
 }
-var TITLES = { exhibitions: 'Exhibitions', gallery: 'Open Gallery', works: 'Artwork', upload: 'Upload', artists: 'Artists', archive: 'Archive', about: 'About', login: 'Log in', signup: 'Sign up', reset: 'Reset Password', mypage: 'My Page', admin: 'Admin', search: 'Search' };
-var NAVMAP = { '': '#/', exhibitions: '#/exhibitions', gallery: '#/gallery', works: '#/gallery', upload: '#/gallery', archive: '#/archive' };
+var TITLES = { exhibitions: 'Exhibitions', soon: 'Soon', gallery: 'Open Gallery', works: 'Artwork', upload: 'Upload', artists: 'Artists', archive: 'Archive', about: 'About', login: 'Log in', signup: 'Sign up', reset: 'Reset Password', mypage: 'My Page', admin: 'Admin', search: 'Search' };
+var NAVMAP = { '': '#/', exhibitions: '#/exhibitions', soon: '#/soon', gallery: '#/gallery', works: '#/gallery', upload: '#/gallery', archive: '#/archive' };
+/* 전시 상세는 전시 상태에 따라 EXHIBITIONS · SOON · ARCHIVE 중 하나를 표시 */
+function navKey(seg) { if (seg[0] === 'exhibitions' && seg[1]) { var e = Q.exhibition(seg[1]); if (e) return { current: '#/exhibitions', upcoming: '#/soon', past: '#/archive' }[e.status]; }
+  if (seg[0] === 'works' && seg[1]) { var w = Q.work(seg[1]); if (w && w.space === 'exhibition') return navKey(['exhibitions', w.exhibitionId]); }
+  return NAVMAP[seg[0] || '']; }
 
 function route(opt) {
   opt = opt || {};
@@ -44,7 +49,7 @@ function route(opt) {
   $('#main').innerHTML = render(r.seg, r.q);
   var enteringGallery = r.seg[0] === 'gallery' && !samePath;
   cur = r;
-  $$('.nav a').forEach(function (a) { a.dataset.nav === NAVMAP[r.seg[0] || ''] ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+  $$('.nav a').forEach(function (a) { a.dataset.nav === navKey(r.seg) ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
   document.title = (TITLES[r.seg[0]] ? TITLES[r.seg[0]] + ' — ' : '') + 'OTHER SPACE' + (r.seg[0] ? '' : ' — Beyond the Ordinary.');
   if (r.anchor) { var t = document.getElementById(r.anchor); if (t) setTimeout(function () { t.scrollIntoView(); }, 0); }
   else if (opt.keep || samePath) window.scrollTo(0, y); else window.scrollTo(0, 0);
@@ -81,7 +86,7 @@ function doSearch(q) { var r = searchAll(q);
   function col(t, list, fn) { return '<div><h3 class="label muted">' + t + '</h3>' + (list.length ? list.slice(0, 5).map(fn).join('') : '<p class="none">결과가 없어요</p>') + '</div>'; }
   $('#sres').innerHTML = (q ? '' : '<p class="label muted" style="grid-column:1/-1">이렇게 찾아보세요 · 사진 · MEMORY · 한서진</p>') +
     col('Exhibitions', r.ex, function (e) { return '<a href="#/exhibitions/' + e.id + '"><span class="th">' + Img(e.coverImage, { w: 88, h: 88 }) + '</span><span><span class="t">' + esc(e.title) + '</span><br><span class="m">' + esc(e.subtitle) + '</span></span></a>'; }) +
-    col('Works', r.works, function (w) { return '<a href="#/works/' + w.id + '"><span class="th">' + Img(Q.imageOf(w), { w: 88, h: 88 }) + '</span><span><span class="t">' + esc(w.title) + '</span><br><span class="m">' + esc(Q.user(w.artistId).nickname) + '</span></span></a>'; }) +
+    col('Works', r.works, function (w) { return '<a href="' + Q.workHref(w) + '"><span class="th">' + Img(Q.imageOf(w), { w: 88, h: 88 }) + '</span><span><span class="t">' + esc(w.title) + '</span><br><span class="m">' + esc(Q.user(w.artistId).nickname) + '</span></span></a>'; }) +
     col('Artists', r.artists, function (u) { return '<a href="#/artists/' + u.id + '"><span class="th">' + Img(u.profileImage, { w: 88, h: 88 }) + '</span><span><span class="t">' + esc(u.nickname) + '</span><br><span class="m">' + (Q.field(u.field) || {}).label + '</span></span></a>'; }) +
     (q ? '<p style="grid-column:1/-1"><a class="link" href="#/search?q=' + encodeURIComponent(q) + '">“' + esc(q) + '” 검색 결과 전체 보기 <span class="ar">→</span></a></p>' : ''); }
 
@@ -97,7 +102,7 @@ function closeViewer() { var v = $('#viewer'); if (!v || v.hidden) return; v.hid
 function drawViewer() { var w = vw.list[vw.i], u = Q.user(w.artistId), wh = ratioWH(w.ratio);
   $('#viewer').innerHTML = '<div class="vtop"><span class="label">' + ('0' + (vw.i + 1)).slice(-2) + ' / ' + ('0' + vw.list.length).slice(-2) + '</span><button class="tool" data-act="v-close" aria-label="닫기">' + IC.close + '</button></div>' +
     '<div class="vstage">' + Img(Q.imageOf(w), { w: wh.w * 3, h: wh.h * 3, ratio: w.ratio, alt: w.title, cls: 'vimg' }) + '</div>' +
-    '<div class="vcap"><div><h2>' + esc(w.title) + '</h2><span class="muted">' + esc(u.nickname) + ' · ' + lbl('field', w.field) + ' · ' + lbl('medium', w.medium) + '</span></div><p>' + esc(w.description) + '</p><a class="link" href="#/works/' + w.id + '">작품 상세 <span class="ar">→</span></a></div>' +
+    '<div class="vcap"><div><h2>' + esc(w.title) + '</h2><span class="muted">' + esc(u.nickname) + ' · ' + lbl('field', w.field) + ' · ' + lbl('medium', w.medium) + '</span></div><p>' + esc(w.description) + '</p><a class="link" href="' + Q.workHref(w) + '">' + (w.space === 'exhibition' ? '작품 이야기' : '작품 상세') + ' <span class="ar">→</span></a></div>' +
     (vw.list.length > 1 ? '<button class="vnav prev" data-act="v-prev" aria-label="이전 작품">' + IC.prev + '</button><button class="vnav next" data-act="v-next" aria-label="다음 작품">' + IC.next + '</button>' : ''); }
 
 /* ── 스크롤 등장 ── */
@@ -142,14 +147,14 @@ document.addEventListener('click', function (e) {
     case 'archive': if (OS.A.setStatus(id, 'archived')) { toast('보관했어요. 공개 목록에서 숨겨지고, 마이페이지 “보관됨”에서 다시 볼 수 있어요.'); if (cur.seg[2] === 'edit') location.hash = '#/mypage/works?status=archived'; else rerender(); } break;
     case 'restore': if (OS.A.setStatus(id, 'published')) { toast('다시 공개했어요.'); rerender(); } break;
     case 'delete': var w = Q.work(id); openModal({ title: '작품을 삭제할까요?', danger: true, ok: { act: 'delete-do', id: id, label: '삭제하기', disabled: true },
-      body: '<p><b>' + esc(w.title) + '</b>을(를) 삭제하면 공개 목록, 프로필, 전시에서 모두 사라져요. 숨기기만 하려면 삭제 대신 <b>보관 처리</b>를 써주세요.</p>' + DemoNote('프로토타입에서는 이 브라우저 탭의 목록에서만 사라지고, 실제 영구 삭제는 이루어지지 않아요.') +
+      body: '<p><b>' + esc(w.title) + '</b>을(를) 삭제하면 오픈 갤러리와 프로필에서 모두 사라져요. 숨기기만 하려면 삭제 대신 <b>보관 처리</b>를 써주세요.</p>' + DemoNote('프로토타입에서는 이 브라우저 탭의 목록에서만 사라지고, 실제 영구 삭제는 이루어지지 않아요.') +
         '<label class="chk"><input type="checkbox" data-act="del-check"> 보관이 아닌 삭제라는 것을 이해했어요</label>' }); break;
     case 'del-check': $('#modal [data-act="delete-do"]').disabled = !b.checked; return;
     case 'delete-do': if (OS.A.deleteWork(id)) { closeModal(); toast('삭제했어요 (데모).'); location.hash = '#/mypage/works'; } break;
     case 'switch-ask': openModal({ title: '창작자 회원으로 전환할까요?', ok: { act: 'switch-do', label: '전환하기' }, body: '<p>지금 계정 그대로 창작자 기능이 켜져요.</p><ul class="keep"><li>이메일, 닉네임 유지</li><li>저장한 작품, 팔로우 목록, 댓글 활동 유지</li><li>작품 업로드·수정·삭제·보관 기능 활성화</li></ul><p class="muted small">창작자 회원에서 다시 감상 회원으로 돌아가는 기능은 이번 기획에 포함되지 않아요.</p>' }); break;
     case 'switch-do': if (OS.A.switchToCreator()) { closeModal(); chrome(); location.hash = '#/mypage/settings?switched=1'; } break;
     case 'modal-close': closeModal(); break;
-    case 'set-featured': var u = Q.user(id); if (OS.A.adminSetFeatured(id, !u.isFeaturedArtist)) { rerender(); toast(u.nickname + (u.isFeaturedArtist ? '님을 메인 작가로 지정했어요.' : '님의 메인 작가 배지를 해제했어요.')); } break;
+    case 'set-featured': var u = Q.user(id); if (OS.A.adminSetFeatured(id, !u.isFeaturedArtist)) { rerender(); toast(u.nickname + (u.isFeaturedArtist ? '님을 전시 작가로 지정했어요.' : '님의 전시 작가 배지를 해제했어요.')); } break;
     case 'report': var rp = Q.db().reports.filter(function (x) { return x.id === id; })[0], how = b.dataset.do;
       if (how === 'hidden') { if (rp.target === 'comment') OS.A.deleteComment(rp.targetId); else OS.A.adminSetWorkStatus(rp.targetId, 'archived'); }
       OS.A.adminReport(id, how); rerender(); toast(how === 'hidden' ? '조치했어요 (데모).' : '문제 없음으로 처리했어요.'); break;
@@ -223,10 +228,11 @@ document.addEventListener('submit', function (e) { var f = e.target, kind = f.da
       if (editId) data.id = editId;
       var w = OS.A.saveWork(data, pendingImage); pendingImage = null;
       if (w) { toast((editId ? '수정했어요' : '작품을 등록했어요') + '. 데모라 이 브라우저 탭에서만 보여요.'); location.hash = '#/works/' + w.id; } break;
-    case 'exhibition': ['title', 'startDate', 'endDate'].forEach(function (i) { mark(i); });
+    case 'exhibition': ['title', 'startDate', 'endDate', 'status'].forEach(function (i) { mark(i); });
       if (!v('title')) bad('title', '전시 제목을 입력해 주세요.'); if (!v('startDate')) bad('startDate', '시작일을 정해주세요.'); if (!v('endDate')) bad('endDate', '종료일을 정해주세요.');
       if (v('startDate') && v('endDate') && v('endDate') < v('startDate')) bad('endDate', '종료일이 시작일보다 빨라요.'); if (!ok) return fail();
       var ex = OS.A.adminSaveExhibition({ id: v('id') || undefined, title: v('title'), subtitle: v('subtitle'), description: v('description'), curatorStatement: v('curatorStatement'), theme: v('theme') || null, startDate: v('startDate'), endDate: v('endDate'), status: v('status'), mood: v('mood'), type: v('type') });
+      if (ex && ex.error === 'max_current') { bad('status', '진행 중 전시는 동시에 최대 ' + OS.MAX_CURRENT + '개까지 열 수 있어요. 다른 전시를 종료한 뒤 바꿔주세요.'); return fail(); }
       if (ex) { toast('전시를 저장했어요 (데모).'); location.hash = '#/admin/exhibitions'; } break;
   }
 });

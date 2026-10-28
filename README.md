@@ -29,12 +29,21 @@
 | `js/pages.js` | 페이지별 화면 |
 | `js/main.js` | 주소(라우팅)와 클릭·입력 처리 |
 
+## 두 공간: 전시와 오픈 갤러리
+
+- **EXHIBITIONS · SOON · ARCHIVE**: 운영자가 지정한 전시 작가(전문 작가)의 작품만 걸려요. 전시 작품은 전시 안의 작품 상세에서 작품 이야기와 감상(댓글)을 따로 가져요.
+- **OPEN GALLERY**: 일반 창작자가 직접 올리는 공간이에요. 전시·아카이브 작품은 오픈 갤러리에 나오지 않고, 두 공간의 작품은 서로 연결되지 않아요.
+- 상단 메뉴 순서: HOME · EXHIBITIONS · SOON · ARCHIVE · OPEN GALLERY
+- 진행 중인 전시는 동시에 최대 5개까지 열 수 있어요 (`js/store.js`의 `MAX_CURRENT`).
+
 ## 페이지 (주소)
 
 | 페이지 | 주소 |
 | --- | --- |
 | HOME | `#/` |
-| 전시 목록 / 상세 | `#/exhibitions`, `#/exhibitions/form-in-tension` |
+| 진행 중인 전시 / 전시 상세 | `#/exhibitions`, `#/exhibitions/form-in-tension` |
+| 전시 작품 상세 (작품 이야기 + 감상) | `#/exhibitions/after-light/works/x06` |
+| 공개 예정 전시 (SOON) | `#/soon` |
 | 오픈 갤러리 | `#/gallery` (예: `#/gallery?field=photo&theme=memory`) |
 | 작품 상세 | `#/works/w04` |
 | 작품 업로드 / 수정 | `#/upload`, `#/works/w09/edit` |
@@ -55,7 +64,7 @@
 | --- | --- | --- |
 | 감상 회원 | 감상하는 사람 (viewer) | 저장, 팔로우, 댓글, 창작자 전환 |
 | 창작자 회원 | 윤다해 (creator) | 작품 업로드·수정·보관·삭제, 초안·보관 작품 |
-| 메인 작가 | 한서진 (creator + Featured Artist) | 메인 작가 배지 표시 |
+| 전시 작가 | 한서진 (creator + Featured Artist) | 전시 작가 배지 표시 |
 | 운영자 | OTHER SPACE 운영팀 (admin) | 전시·회원·작품·신고 관리, 배지 지정 |
 
 ## 현재 구현 범위
@@ -68,7 +77,7 @@
 - 저장, 팔로우, 댓글 작성·삭제. 로그인하지 않았으면 로그인 화면으로 이동하고, 로그인 후 하려던 동작을 이어서 처리
 - 작품 등록·수정, 공개·초안·보관 상태, 보관 해제, 확인 창을 거치는 삭제
 - 감상 회원 → 창작자 회원 전환 (마이페이지 → Settings), 계정·저장·팔로우·댓글 유지
-- 운영자: 회원 유형 변경, 메인 작가 배지 지정·해제, 작품 공개 상태 변경, 신고 처리, 전시 생성·수정
+- 운영자: 회원 유형 변경, 전시 작가 배지 지정·해제, 작품 공개 상태 변경, 신고 처리, 전시 생성·수정
 - 전시 상세의 몰입형 뷰어 (키보드 ← → Esc)
 - 로딩(스켈레톤), 빈 상태, 오류 상태, 404, 접근 권한 안내 화면
 - 반응형(데스크톱·태블릿·모바일), 키보드 탐색, 모션 감소 설정 대응
@@ -95,7 +104,7 @@
 `js/data.js`의 필드는 기획서의 모델과 같은 이름을 써요.
 
 - **Users**: id, email, nickname, profileImage, bio, role(`viewer` / `creator` / `admin`), isFeaturedArtist, createdAt
-- **Works**: id, title, image, description, artistId, field, theme, medium, status(`draft` / `published` / `archived`), createdAt, updatedAt (+ 제작 의도 `intent`, 카드 비율 `ratio`)
+- **Works**: id, space(`gallery` / `exhibition`), exhibitionId(전시 작품만), story(전시 작품의 작품 이야기), title, image, description, artistId, field, theme, medium, status(`draft` / `published` / `archived`), createdAt, updatedAt (+ 제작 의도 `intent`, 카드 비율 `ratio`)
 - **Comments**: id, workId, authorId, content, createdAt
 - **Saves**: userId, workId, createdAt
 - **Follows**: followerId, followingId, createdAt
@@ -108,7 +117,7 @@
 - Viewer는 작품을 올리거나 수정할 수 없어요.
 - Creator는 본인 작품만 수정·삭제·보관할 수 있어요.
 - Admin만 운영자 화면에 들어갈 수 있어요.
-- Featured Artist는 회원 유형이 아니라 Admin이 Creator에게 지정하는 표시예요. 작품 관리 권한은 바뀌지 않아요.
+- Featured Artist(전시 작가)는 회원 유형이 아니라 Admin이 Creator에게 지정하는 표시예요. 지정된 작가의 작품만 전시에 걸려요.
 - 초안·보관 작품은 공개 목록에 나오지 않아요.
 - **지금의 권한 확인은 화면에서만 이뤄져요.** 실제 기능을 연결할 때는 같은 규칙을 서버(예: Supabase Row Level Security)에서 다시 검사해야 해요.
 

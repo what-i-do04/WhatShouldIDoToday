@@ -776,3 +776,52 @@ main:focus{outline:none}
 .admin-main .chips{margin:0;padding:0 0 4px}
 .h3+.relgrid,.h3+.argrid,.h3+.alist{margin-top:24px}
 .acct-pop[hidden]{display:none}
+
+/* ── v0.3.0: EXHIBITIONS 바로 보기 · SOON · 전시 작품 상세 ── */
+.exh-top{padding:clamp(104px,11vw,140px) 0 8px}
+.exblock{--bg:var(--obsidian);--fg:var(--paper);--sub:rgba(242,240,234,.72);--ln:var(--line-dark);background:var(--bg);color:var(--fg);padding:clamp(40px,6vw,88px) 0;border-bottom:1px solid var(--ln)}
+.exblock .muted,.exblock .label.muted{color:var(--grey)}
+.exblock.mood-paper .muted,.exblock.mood-paper .label.muted{color:var(--grey-ink)}
+.exb-head{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,3vw,40px);align-items:end;margin-bottom:clamp(24px,3vw,40px)}
+.exb-no{font-family:var(--serif);font-size:clamp(28px,3vw,40px);line-height:1;color:var(--grey)}
+.exb-t{display:grid;gap:8px;min-width:0}
+.exb-t .ttl{font-family:var(--serif);font-weight:300;font-size:clamp(40px,6vw,88px);line-height:.95;letter-spacing:-.02em;text-wrap:balance}
+.exb-t .ttl.t-italic{font-style:italic}.exb-t .ttl.t-sans{font-family:var(--sans);font-weight:300;letter-spacing:-.04em}
+.exb-t .ko{font-size:15px;font-weight:500;color:var(--sub)}
+.exb-head:hover .link{gap:18px}
+.exb-works{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,2vw,28px);align-items:end}
+.exb-w{display:grid;gap:12px;min-width:0}
+.exb-w .fig{transition:opacity .3s}.exb-w:hover .fig{opacity:.86}
+.exb-cap{display:grid;grid-template-columns:auto 1fr;column-gap:10px;font-size:14px;line-height:1.4}
+.exb-cap .idx{grid-row:span 2;font-family:var(--serif);font-size:18px;color:var(--grey)}
+.exb-cap b{font-weight:500}
+@media (max-width:860px){.exb-head{grid-template-columns:auto 1fr}.exb-head .link{grid-column:2}.exb-works{grid-template-columns:repeat(2,1fr)}}
+
+.soonlist{display:grid;gap:clamp(56px,8vw,120px)}
+.soon{display:grid;grid-template-columns:7fr 5fr;gap:clamp(24px,4vw,72px);align-items:center}
+.soon:nth-child(even) .soon-img{order:2}
+.soon-img{position:relative;display:block}
+.dday{position:absolute;left:16px;top:16px;background:var(--paper);color:var(--obsidian);font-size:12px;font-weight:600;letter-spacing:.12em;padding:6px 10px}
+.soon-txt{min-width:0}
+.soon-txt .ttl{font-family:var(--serif);font-weight:300;font-size:clamp(40px,5vw,80px);line-height:.95;margin:14px 0 10px;letter-spacing:-.02em}
+.soon-txt .ttl.t-italic{font-style:italic}.soon-txt .ttl.t-sans{font-family:var(--sans);letter-spacing:-.04em}
+.soon-txt .ko{font-size:15px;font-weight:500}
+.soon-txt p{margin-top:14px;font-size:15px;color:rgba(242,240,234,.72);max-width:30em}
+.soon-pre{margin:24px 0 8px;display:grid;gap:10px}
+.soon-pre>div{display:flex;gap:10px}.soon-pre a{width:88px}
+.soon-txt .link{margin-top:20px}
+@media (max-width:860px){.soon{grid-template-columns:1fr}.soon:nth-child(even) .soon-img{order:0}}
+
+.exw .wbody>.wrap:first-child .back{margin-bottom:24px}
+.exw .wartist{border-color:var(--ln)}
+.exw-lead{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2vw,24px)!important;line-height:1.5!important}
+.exw .wtext p{color:var(--fg)}
+.exw .wex a{border-color:var(--ln)}
+.exw-nav{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:clamp(40px,5vw,72px);padding-top:24px;border-top:1px solid var(--ln)}
+.exw-nav a{display:grid;gap:6px;font-size:15px}.exw-nav a b{font-family:var(--serif);font-weight:400;font-size:clamp(20px,2vw,26px)}
+.exw-nav .exw-next{text-align:right}
+.exw-nav a:hover b{text-decoration:underline;text-underline-offset:5px}
+.exw .comments{border-top:1px solid var(--ln)}
+.exw-cnote{margin:-8px 0 20px}
+.exw .related{border-top:1px solid var(--ln)}
+.exb-head .link{justify-self:start}

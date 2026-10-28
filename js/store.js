@@ -6,7 +6,7 @@
      실제 서비스에서는 같은 규칙을 서버(DB 정책, 예: Supabase RLS)에서 다시 검사해야 해요.
    ========================================================= */
 window.OS = (function () {
-  var KEY = 'os-proto-state-v2';
+  var KEY = 'os-proto-state-v3', MAX_CURRENT = 5; // 진행 중 전시는 동시에 최대 5개
   var DB, session = { userId: null, demo: false }, uploads = {}; // uploads: 업로드한 이미지 미리보기(메모리에만)
 
   function fresh() { return JSON.parse(JSON.stringify(window.OS_DATA)); }
@@ -29,16 +29,23 @@ window.OS = (function () {
     work: function (id) { return find(DB.works, id); },
     exhibition: function (id) { return find(DB.exhibitions, id); },
     creators: function () { return DB.users.filter(function (u) { return u.role === 'creator'; }); },
-    /* 공개 목록: published 만. 보관·초안은 일반 목록에 나오지 않음 */
-    publicWorks: function () { return DB.works.filter(function (w) { return w.status === 'published'; }); },
-    worksBy: function (uid, includeHidden) { return DB.works.filter(function (w) { return w.artistId === uid && (includeHidden || w.status === 'published'); }).sort(byNew); },
+    /* 전시 작가(전문 작가)와 오픈 갤러리 창작자(일반 창작자) */
+    proArtists: function () { return Q.creators().filter(function (u) { return u.isFeaturedArtist; }); },
+    galleryCreators: function () { return Q.creators().filter(function (u) { return !u.isFeaturedArtist; }); },
+    /* 오픈 갤러리 공개 목록: 오픈 갤러리 작품(space: gallery) 중 published 만. 전시 작품은 절대 섞이지 않음 */
+    publicWorks: function () { return DB.works.filter(function (w) { return w.space === 'gallery' && w.status === 'published'; }); },
+    worksBy: function (uid, includeHidden) { return DB.works.filter(function (w) { return w.space === 'gallery' && w.artistId === uid && (includeHidden || w.status === 'published'); }).sort(byNew); },
+    /* 전시 작품: 공개 예정 전시는 앞의 2점만 미리 공개 */
+    exWorksBy: function (uid) { return DB.works.filter(function (w) { return w.space === 'exhibition' && w.artistId === uid && Q.exVisible(w); }); },
+    exVisible: function (w) { var e = Q.exhibition(w.exhibitionId); if (!e) return false; if (e.status !== 'upcoming') return true; return Q.exWorks(e.id).slice(0, 2).indexOf(w) > -1; },
+    workHref: function (w) { return w.space === 'exhibition' ? '#/exhibitions/' + w.exhibitionId + '/works/' + w.id : '#/works/' + w.id; },
+    currentCount: function (exceptId) { return DB.exhibitions.filter(function (e) { return e.status === 'current' && e.id !== exceptId; }).length; },
     exWorks: function (exId) {
       return DB.exhibitionWorks.filter(function (x) { return x.exhibitionId === exId; }).sort(function (a, b) { return a.displayOrder - b.displayOrder; })
         .map(function (x) { return find(DB.works, x.workId); }).filter(function (w) { return w && w.status === 'published'; });
     },
     exArtists: function (exId) { var seen = {}, out = []; Q.exWorks(exId).forEach(function (w) { if (!seen[w.artistId]) { seen[w.artistId] = 1; out.push(Q.user(w.artistId)); } }); return out; },
-    exOfWork: function (wid) { return DB.exhibitionWorks.filter(function (x) { return x.workId === wid; }).map(function (x) { return Q.exhibition(x.exhibitionId); }); },
-    comments: function (wid) { return DB.comments.filter(function (c) { return c.workId === wid; }).sort(function (a, b) { return a.createdAt < b.createdAt ? -1 : 1; }); },
+        comments: function (wid) { return DB.comments.filter(function (c) { return c.workId === wid; }).sort(function (a, b) { return a.createdAt < b.createdAt ? -1 : 1; }); },
     commentsBy: function (uid) { return DB.comments.filter(function (c) { return c.authorId === uid; }).sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; }); },
     followers: function (uid) { return DB.follows.filter(function (f) { return f.followingId === uid; }).length; },
     following: function (uid) { return DB.follows.filter(function (f) { return f.followerId === uid; }).map(function (f) { return Q.user(f.followingId); }).filter(Boolean); },
@@ -80,7 +87,7 @@ window.OS = (function () {
     deleteComment: function (cid) { DB.comments = DB.comments.filter(function (c) { return c.id !== cid; }); save(); },
     saveWork: function (data, imagePreview) { var u = me(), w;
       if (data.id) { w = Q.work(data.id); if (!canManageWork(w)) return null; Object.keys(data).forEach(function (k) { w[k] = data[k]; }); w.updatedAt = DB.today; }
-      else { if (!can('upload')) return null; w = Object.assign({ id: 'n' + Date.now(), image: { gen: 'rings', seed: Date.now() % 997 }, imageUrl: '', artistId: u.id, ratio: '4/5', createdAt: DB.today, updatedAt: DB.today }, data); DB.works.push(w); }
+      else { if (!can('upload')) return null; w = Object.assign({ id: 'n' + Date.now(), space: 'gallery', image: { gen: 'rings', seed: Date.now() % 997 }, imageUrl: '', artistId: u.id, ratio: '4/5', createdAt: DB.today, updatedAt: DB.today }, data); DB.works.push(w); }
       if (imagePreview) uploads[w.id] = imagePreview;
       save(); return w; },
     setStatus: function (wid, status) { var w = Q.work(wid); if (!canManageWork(w)) return false; w.status = status; w.updatedAt = DB.today; save(); return true; },
@@ -95,6 +102,7 @@ window.OS = (function () {
     adminSetFeatured: function (uid, on) { if (!can('admin')) return false; var u = Q.user(uid); if (u.role !== 'creator') return false; u.isFeaturedArtist = on; save(); return true; },
     adminSetWorkStatus: function (wid, s) { if (!can('admin')) return false; Q.work(wid).status = s; save(); return true; },
     adminSaveExhibition: function (d) { if (!can('admin')) return null; var e = d.id && Q.exhibition(d.id);
+      if (d.status === 'current' && Q.currentCount(e ? e.id : null) >= MAX_CURRENT) return { error: 'max_current' };
       if (e) Object.keys(d).forEach(function (k) { e[k] = d[k]; });
       else { e = Object.assign({ id: 'ex-' + Date.now(), kind: '기획 전시', mood: 'dark', type: 'serif', coverImage: { gen: 'lines', seed: Date.now() % 997 } }, d); DB.exhibitions.push(e); }
       save(); return e; },
@@ -117,5 +125,5 @@ window.OS = (function () {
   };
 
   return { Q: Q, A: A, Auth: Auth, me: me, role: role, can: can, canManageWork: canManageWork, canSeeWork: canSeeWork,
-    ROLE_LABEL: ROLE_LABEL, ROLE_EN: ROLE_EN, reset: reset };
+    ROLE_LABEL: ROLE_LABEL, ROLE_EN: ROLE_EN, MAX_CURRENT: MAX_CURRENT, reset: reset };
 })();

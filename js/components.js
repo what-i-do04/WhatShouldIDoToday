@@ -39,13 +39,13 @@ function Logo(o) { o = o || {};
   return '<a class="logo' + (o.lg ? ' lg' : '') + '" href="#/" aria-label="OTHER SPACE 홈"><span class="mark">OTHER SPACE</span>' + (o.slogan === false ? '' : '<span class="slogan">Beyond the Ordinary.</span>') + '</a>'; }
 
 /* ── 배지 · 이름 ── */
-function FeaturedArtistBadge(u, small) { return u && u.isFeaturedArtist ? '<span class="fbadge' + (small ? ' sm' : '') + '" title="운영자가 지정한 메인 작가">Featured Artist</span>' : ''; }
+function FeaturedArtistBadge(u, small) { return u && u.isFeaturedArtist ? '<span class="fbadge' + (small ? ' sm' : '') + '" title="운영자가 지정한 전시 작가">Featured Artist</span>' : ''; }
 function UserLink(u, o) { o = o || {}; if (!u) return '<span class="muted">알 수 없는 사용자</span>';
   var name = esc(u.nickname) + ' ' + FeaturedArtistBadge(u, true);
   return u.role === 'creator' ? '<a class="ulink" href="#/artists/' + u.id + '">' + name + '</a>' : '<span class="ulink">' + name + '</span>'; }
 
 /* ── 헤더 · 메뉴 · 푸터 ── */
-var NAV = [{ to: '#/', t: 'HOME', ko: '홈' }, { to: '#/exhibitions', t: 'EXHIBITIONS', ko: '전시' }, { to: '#/gallery', t: 'OPEN GALLERY', ko: '오픈 갤러리' }, { to: '#/archive', t: 'ARCHIVE', ko: '아카이브' }];
+var NAV = [{ to: '#/', t: 'HOME', ko: '홈' }, { to: '#/exhibitions', t: 'EXHIBITIONS', ko: '진행 중인 전시' }, { to: '#/soon', t: 'SOON', ko: '공개 예정 전시' }, { to: '#/archive', t: 'ARCHIVE', ko: '지난 전시' }, { to: '#/gallery', t: 'OPEN GALLERY', ko: '오픈 갤러리' }];
 var NAV_MORE = [{ to: '#/artists', t: 'ARTISTS', ko: '창작자' }, { to: '#/about', t: 'ABOUT', ko: '소개' }];
 function AccountMenuItems() { var u = OS.me();
   return '<a href="#/mypage">마이페이지</a>' + (OS.can('upload') ? '<a href="#/upload">작품 올리기</a><a href="#/mypage/works">내 작품 관리</a>' : '') +
@@ -67,10 +67,10 @@ function Menu() { var u = OS.me();
     '<div class="menu-foot"><button class="tool pill" data-act="search">' + IC.search + ' 검색</button></div>'; }
 function Footer() {
   return '<div class="wrap"><div class="fgrid"><div>' + Logo({ lg: true }) + '<p class="about">패션, 그래픽 디자인, 사진, 일러스트레이션, 디지털 아트를 온라인 전시로 경험하는 디지털 미술관.</p></div>' +
-    '<div><h2 class="label muted">Visit</h2><ul><li><a href="#/exhibitions">전시</a></li><li><a href="#/gallery">오픈 갤러리</a></li><li><a href="#/artists">창작자</a></li><li><a href="#/archive">아카이브</a></li></ul></div>' +
+    '<div><h2 class="label muted">Visit</h2><ul><li><a href="#/exhibitions">진행 중인 전시</a></li><li><a href="#/soon">공개 예정 전시</a></li><li><a href="#/archive">아카이브</a></li><li><a href="#/gallery">오픈 갤러리</a></li><li><a href="#/artists">창작자</a></li></ul></div>' +
     '<div><h2 class="label muted">Participate</h2><ul><li><a href="#/upload">작품 올리기</a></li><li><a href="#/signup">회원가입</a></li><li><a href="#/login">로그인</a></li><li><a href="#/mypage">마이페이지</a></li></ul></div>' +
     '<div><h2 class="label muted">Info</h2><ul><li><a href="#/about">OTHER SPACE 소개</a></li><li><a href="#/about#contact">문의</a></li><li><a href="#/admin">운영자</a></li></ul></div></div>' +
-    '<div class="fbot"><span>© 2026 OTHER SPACE</span><span class="demo-note">프로토타입 v0.2.0 · 전시, 작가, 작품은 모두 가상 데이터이고 이미지는 임시 생성 이미지예요 · <button data-act="reset-demo">데모 상태 초기화</button></span></div></div>'; }
+    '<div class="fbot"><span>© 2026 OTHER SPACE</span><span class="demo-note">프로토타입 v0.3.0 · 전시, 작가, 작품은 모두 가상 데이터이고 이미지는 임시 생성 이미지예요 · <button data-act="reset-demo">데모 상태 초기화</button></span></div></div>'; }
 
 /* ── 섹션 제목 ── */
 function SecHead(no, en, ko, sub, link) {
@@ -94,19 +94,21 @@ function ExhibitionCard(e, variant, ratio) {
 function SaveButton(w, variant) { var on = OS.A.isSaved(w.id);
   return '<button class="savebtn ' + (variant || '') + (on ? ' on' : '') + '" data-act="save" data-id="' + w.id + '" aria-pressed="' + on + '" aria-label="' + esc(w.title) + (on ? ' 저장 취소' : ' 저장') + '">' + IC.save + (variant === 'full' ? '<span>' + (on ? '저장됨' : '저장') + '</span>' : '') + '</button>'; }
 function ArtworkCard(w, o) { o = o || {}; var u = Q.user(w.artistId), ratio = o.ratio || w.ratio, wh = ratioWH(ratio);
-  return '<article class="acard' + (o.cls ? ' ' + o.cls : '') + '"><a class="aimg" href="#/works/' + w.id + '" tabindex="-1" aria-hidden="true">' + Img(Q.imageOf(w), { w: wh.w, h: wh.h, ratio: ratio, alt: '' }) + '</a>' +
+  return '<article class="acard' + (o.cls ? ' ' + o.cls : '') + '"><a class="aimg" href="' + Q.workHref(w) + '" tabindex="-1" aria-hidden="true">' + Img(Q.imageOf(w), { w: wh.w, h: wh.h, ratio: ratio, alt: '' }) + '</a>' +
     (o.save === false ? '' : SaveButton(w)) + (o.status && w.status !== 'published' ? '<span class="stbadge">' + { draft: '초안', archived: '보관됨' }[w.status] + '</span>' : '') +
-    '<div class="ainfo"><a class="at" href="#/works/' + w.id + '">' + esc(w.title) + '</a><div class="ab">' + UserLink(u) + '</div>' + (o.meta ? '<div class="am label muted">' + lbl('field', w.field) + ' · ' + (w.theme ? Q.theme(w.theme).en : '') + '</div>' : '') + '</div></article>'; }
+    '<div class="ainfo"><a class="at" href="' + Q.workHref(w) + '">' + esc(w.title) + '</a><div class="ab">' + UserLink(u) + '</div>' + (o.meta ? '<div class="am label muted">' + lbl('field', w.field) + ' · ' + (w.theme ? Q.theme(w.theme).en : '') + '</div>' : '') + '</div></article>'; }
 
 /* ── 창작자 카드 ── */
-function ArtistCard(u) { var ws = Q.worksBy(u.id).slice(0, 3), f = Q.field(u.field);
+function artistWorks(u) { return u.isFeaturedArtist ? Q.exWorksBy(u.id) : Q.worksBy(u.id); }
+function ArtistCard(u) { var all = artistWorks(u), ws = all.slice(0, 3), f = Q.field(u.field);
   return '<article class="arcard rv"><a class="avlink" href="#/artists/' + u.id + '" tabindex="-1" aria-hidden="true">' + Img(u.profileImage, { w: 300, h: 300, ratio: '1/1', cls: 'av' }) + '</a>' +
-    '<div class="arinfo"><div class="label muted">' + (f ? f.label : '') + ' · 작품 ' + Q.worksBy(u.id).length + '점</div><h3><a href="#/artists/' + u.id + '">' + esc(u.nickname) + '</a> ' + FeaturedArtistBadge(u) + '</h3><p>' + esc(u.bio) + '</p>' +
-    '<div class="reps" aria-label="대표 작품">' + ws.map(function (w) { return '<a href="#/works/' + w.id + '" title="' + esc(w.title) + '">' + Img(Q.imageOf(w), { w: 160, h: 160, ratio: '1/1', alt: w.title }) + '</a>'; }).join('') + '</div>' +
+    '<div class="arinfo"><div class="label muted">' + (f ? f.label : '') + ' · ' + (u.isFeaturedArtist ? '전시 작품 ' : '작품 ') + all.length + '점</div><h3><a href="#/artists/' + u.id + '">' + esc(u.nickname) + '</a> ' + FeaturedArtistBadge(u) + '</h3><p>' + esc(u.bio) + '</p>' +
+    '<div class="reps" aria-label="대표 작품">' + ws.map(function (w) { return '<a href="' + Q.workHref(w) + '" title="' + esc(w.title) + '">' + Img(Q.imageOf(w), { w: 160, h: 160, ratio: '1/1', alt: w.title }) + '</a>'; }).join('') + '</div>' +
     '<a class="link" href="#/artists/' + u.id + '">프로필 방문 <span class="ar">→</span></a></div></article>'; }
 
 /* ── 작품 정보 ── */
 function ArtworkMetadata(w) { var th = w.theme ? Q.theme(w.theme) : null;
+  if (w.space === 'exhibition') return '<dl class="amd"><div><dt>분야</dt><dd>' + lbl('field', w.field) + '</dd></div><div><dt>주제</dt><dd>' + (th ? th.label + ' · ' + th.en : '—') + '</dd></div><div><dt>매체</dt><dd>' + lbl('medium', w.medium) + '</dd></div><div><dt>제작</dt><dd>' + w.createdAt.slice(0, 4) + '</dd></div></dl>';
   return '<dl class="amd"><div><dt>분야</dt><dd><a href="#/gallery?field=' + w.field + '">' + lbl('field', w.field) + '</a></dd></div><div><dt>주제</dt><dd>' + (th ? '<a href="#/gallery?theme=' + th.id + '">' + th.label + ' · ' + th.en + '</a>' : '—') + '</dd></div>' +
     '<div><dt>매체</dt><dd><a href="#/gallery?medium=' + w.medium + '">' + lbl('medium', w.medium) + '</a></dd></div><div><dt>등록일</dt><dd>' + dot(w.createdAt) + '</dd></div></dl>'; }
 function FollowButton(u, cls) { var me = OS.me(); if (me && me.id === u.id) return ''; var on = OS.A.isFollowing(u.id);
@@ -119,7 +121,7 @@ function CommentList(wid) { var cs = Q.comments(wid), me = OS.me();
     return '<li class="cmt"><div class="ch">' + UserLink(u) + (u && u.role !== 'viewer' ? '<span class="label muted">' + OS.ROLE_EN[u.role] + '</span>' : '') + '<time class="muted">' + dot(c.createdAt) + '</time></div><p>' + esc(c.content) + '</p>' +
       (me && (me.id === c.authorId || OS.can('admin')) ? '<button class="txtbtn" data-act="del-comment" data-id="' + c.id + '">삭제</button>' : '') + '</li>'; }).join('') + '</ol>'; }
 function CommentForm(wid) { var me = OS.me();
-  if (!me) return '<div class="cform locked"><p>감상을 남기려면 로그인이 필요해요.</p><div class="row2"><a class="btn pri" href="#/login?next=' + encodeURIComponent('/works/' + wid) + '">로그인</a><a class="btn ghost" href="#/signup">회원가입</a></div></div>';
+  if (!me) return '<div class="cform locked"><p>감상을 남기려면 로그인이 필요해요.</p><div class="row2"><a class="btn pri" href="#/login?next=' + encodeURIComponent(Q.workHref(Q.work(wid)).slice(1)) + '">로그인</a><a class="btn ghost" href="#/signup">회원가입</a></div></div>';
   return '<form class="cform" data-form="comment" data-id="' + wid + '"><label for="cmt-' + wid + '" class="cform-l">' + esc(me.nickname) + ' ' + FeaturedArtistBadge(me, true) + '<span class="muted">으로 감상 남기기</span></label>' +
     '<textarea id="cmt-' + wid + '" name="content" rows="3" maxlength="500" placeholder="작품을 보고 느낀 점을 남겨주세요" required></textarea><div class="cform-b"><small class="muted"><span data-count>0</span>/500</small><button class="btn pri sm" type="submit">등록</button></div></form>'; }
 
@@ -159,7 +161,7 @@ function RoleSelector(sel) {
   return '<div class="types" role="radiogroup" aria-label="회원 유형">' + ['viewer', 'creator'].map(function (k, i) { var I = ROLE_INFO[k];
     return '<button type="button" class="type" role="radio" aria-checked="' + (sel === k) + '" data-act="pick-type" data-type="' + k + '"><span class="hd"><span><span class="k">' + 'AB'[i] + '. ' + OS.ROLE_LABEL[k] + '</span> <span class="e">' + OS.ROLE_EN[k] + '</span></span><span class="radio"></span></span><p class="ld">' + I.lead + '</p><ul>' +
       I.items.map(function (x, j) { return '<li class="' + (k === 'creator' && j > 0 ? 'plus' : '') + '">' + x + '</li>'; }).join('') + '</ul>' + (I.no ? '<p class="no">' + I.no + '</p>' : '') + '</button>'; }).join('') +
-    '</div><p class="types-note">메인 작가(Featured Artist) 배지는 가입할 때 고르는 유형이 아니에요. 운영자가 창작자 회원 중에서 지정해요.</p>'; }
+    '</div><p class="types-note">전시 작가(Featured Artist) 배지는 가입할 때 고르는 유형이 아니에요. 운영자가 창작자 회원 중에서 지정해요.</p>'; }
 function ArtworkForm(w) { var edit = !!w; w = w || { status: 'published' };
   return '<form class="awform" data-form="artwork" novalidate>' + (edit ? '<input type="hidden" name="id" value="' + w.id + '">' : '') +
     '<div class="awgrid"><div class="awmain">' +
@@ -184,8 +186,8 @@ function ArtworkForm(w) { var edit = !!w; w = w || { status: 'published' };
 /* ── 프로필 머리 ── */
 function ProfileHeader(u, own) { var f = Q.field(u.field);
   return '<header class="prof"><div class="wrap profin">' + Img(u.profileImage, { w: 400, h: 400, ratio: '1/1', cls: 'pav', alt: u.nickname + ' 프로필 이미지' }) +
-    '<div class="pinfo"><div class="label muted">' + (f ? f.label + ' · ' + f.en : '') + (u.role === 'creator' ? ' · Creator' : '') + '</div><h1 class="pname">' + esc(u.nickname) + '</h1>' + (u.isFeaturedArtist ? '<div>' + FeaturedArtistBadge(u) + '</div>' : '') +
-    '<p class="pbio">' + esc(u.bio || '아직 소개가 없어요.') + '</p><div class="pstats"><span><b>' + Q.worksBy(u.id).length + '</b> 공개 작품</span><span><b>' + Q.followers(u.id) + '</b> 팔로워</span><span><b>' + Q.following(u.id).length + '</b> 팔로우</span></div>' +
+    '<div class="pinfo"><div class="label muted">' + (f ? f.label + ' · ' + f.en : '') + (u.role === 'creator' ? (u.isFeaturedArtist ? ' · Exhibition Artist' : ' · Open Gallery Creator') : '') + '</div><h1 class="pname">' + esc(u.nickname) + '</h1>' + (u.isFeaturedArtist ? '<div>' + FeaturedArtistBadge(u) + '</div>' : '') +
+    '<p class="pbio">' + esc(u.bio || '아직 소개가 없어요.') + '</p><div class="pstats"><span><b>' + artistWorks(u).length + '</b> ' + (u.isFeaturedArtist ? '전시 작품' : '공개 작품') + '</span><span><b>' + Q.followers(u.id) + '</b> 팔로워</span><span><b>' + Q.following(u.id).length + '</b> 팔로우</span></div>' +
     '<div class="pacts">' + (own ? '<a class="btn ghost" href="#/mypage/profile">프로필 수정</a><a class="btn pri" href="#/mypage/works">작품 관리</a>' : FollowButton(u)) + '</div></div></div></header>'; }
 
 /* ── 운영자 사이드바 ── */

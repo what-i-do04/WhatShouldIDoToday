@@ -12,7 +12,7 @@ window.OS_INTRO = (function () {
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
   /* 조각에 들어갈 사진: images/intro/ 의 사진들이 칸마다 섞여 들어가요. 사진을 바꾸거나 더하려면 이 폴더와 목록만 고치면 돼요. */
-  var PHOTOS = window.OS_INTRO_IMAGES || ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13'].map(function (n) { return 'images/intro/' + n + '.jpg'; });
+  var PHOTOS = window.OS_INTRO_IMAGES || ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].map(function (n) { return 'images/intro/' + n + '.jpg'; });
   function preload(done) { var left = PHOTOS.length, ok = [];
     PHOTOS.forEach(function (u) { var im = new Image(); im.onload = function () { ok.push(u); fin(); }; im.onerror = fin; im.src = u; });
     function fin() { if (--left === 0) done(ok); } }

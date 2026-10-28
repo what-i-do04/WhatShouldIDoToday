@@ -29,7 +29,7 @@
 | `js/components.js` | 공통 컴포넌트 (Header, Footer, ArtworkCard, SaveButton 등) |
 | `js/pages.js` | 페이지별 화면 |
 | `js/main.js` | 주소(라우팅)와 클릭·입력 처리, 상단 뒤로/앞으로 버튼 |
-| `js/intro.js` | 첫 화면 인트로: 작품 조각이 모여 OTHER SPACE 글자가 되고, 사라진 뒤 입장하기 버튼 (탭마다 처음 한 번, 푸터에서 다시 보기) |
+| `js/intro.js` | 첫 화면 인트로: 작품 사진 조각(`images/intro/`)이 모여 OTHER SPACE 글자가 되고, 사라진 뒤 입장하기 버튼 (탭마다 처음 한 번, 푸터에서 다시 보기) |
 
 ## 두 공간: 전시와 오픈 갤러리
 

@@ -858,3 +858,20 @@ main:focus{outline:none}
 .histnav .tool svg{width:15px;height:15px;stroke-width:1.6}
 .histnav .tool:disabled{opacity:.25;cursor:default}
 @media (max-width:420px){.hdr .logo .mark{letter-spacing:.2em;font-size:13px}.hstart{gap:10px}}
+
+/* ── 첫 화면 인트로 ── */
+html.intro-on,html.intro-on body{overflow:hidden}
+.intro{position:fixed;inset:0;z-index:300;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity 1s var(--ease)}
+.intro.out{opacity:0;pointer-events:none}
+.intro-stage{position:absolute;inset:0;perspective:1000px;perspective-origin:50% 50%;overflow:hidden}
+.intro-stage i{position:absolute;left:50%;top:50%;display:block;opacity:0;transition-property:transform,opacity;transition-timing-function:cubic-bezier(.16,.84,.24,1),ease-out;backface-visibility:hidden;will-change:transform}
+.intro-stage i.c{border-radius:50%}
+.intro-stage i.p{border-radius:28%}
+.intro-stage.in i{transform:var(--to)!important;opacity:1}
+.intro-stage.fade{-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 33%,#000 66%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,transparent 33%,#000 66%,#000 100%);-webkit-mask-size:300% 100%;mask-size:300% 100%;animation:introFade 1.8s ease-in-out forwards}
+@keyframes introFade{from{-webkit-mask-position:100% 0;mask-position:100% 0}to{-webkit-mask-position:0 0;mask-position:0 0}}
+.intro-enter{position:relative;z-index:1;font:500 13px/1 var(--sans);letter-spacing:.42em;padding:14px 4px 14px 10px;color:var(--paper);border-bottom:1px solid rgba(242,240,234,.5);opacity:0;transform:translateY(6px);transition:opacity 1.2s ease,transform 1.2s var(--ease),border-color .3s}
+.intro-enter.on{opacity:1;transform:none}
+.intro-enter:hover{border-color:var(--paper)}
+.intro-enter:focus-visible{outline:1px solid var(--paper);outline-offset:6px}
+@media (prefers-reduced-motion:reduce){.intro-stage i{transition:none}.intro-stage.fade{animation:none;opacity:0;transition:opacity .6s}}

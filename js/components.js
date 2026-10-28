@@ -71,7 +71,7 @@ function Footer() {
     '<div><h2 class="label muted">Visit</h2><ul><li><a href="#/exhibitions">진행 중인 전시</a></li><li><a href="#/soon">공개 예정 전시</a></li><li><a href="#/archive">아카이브</a></li><li><a href="#/gallery">오픈 갤러리</a></li><li><a href="#/artists">창작자</a></li></ul></div>' +
     '<div><h2 class="label muted">Participate</h2><ul><li><a href="#/upload">작품 올리기</a></li><li><a href="#/signup">회원가입</a></li><li><a href="#/login">로그인</a></li><li><a href="#/mypage">마이페이지</a></li></ul></div>' +
     '<div><h2 class="label muted">Info</h2><ul><li><a href="#/about">OTHER SPACE 소개</a></li><li><a href="#/about#contact">문의</a></li><li><a href="#/admin">운영자</a></li></ul></div></div>' +
-    '<div class="fbot"><span>© 2026 OTHER SPACE</span><span class="demo-note">프로토타입 v0.3.0 · 전시, 작가, 작품은 모두 가상 데이터이고 이미지는 임시 생성 이미지예요 · <button data-act="reset-demo">데모 상태 초기화</button></span></div></div>'; }
+    '<div class="fbot"><span>© 2026 OTHER SPACE</span><span class="demo-note">프로토타입 v0.3.0 · 전시, 작가, 작품은 모두 가상 데이터이고 이미지는 임시 생성 이미지예요 · <button data-act="intro">인트로 다시 보기</button> · <button data-act="reset-demo">데모 상태 초기화</button></span></div></div>'; }
 
 /* ── 섹션 제목 ── */
 function SecHead(no, en, ko, sub, link) {

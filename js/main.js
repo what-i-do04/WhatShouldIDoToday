@@ -176,6 +176,7 @@ document.addEventListener('click', function (e) {
       if (how === 'hidden') { if (rp.target === 'comment') OS.A.deleteComment(rp.targetId); else OS.A.adminSetWorkStatus(rp.targetId, 'archived'); }
       OS.A.adminReport(id, how); rerender(); toast(how === 'hidden' ? '조치했어요 (데모).' : '문제 없음으로 처리했어요.'); break;
     case 'reset-demo': OS.reset(); chrome(); location.hash = '#/'; rerender(); toast('데모 상태를 처음으로 되돌렸어요.'); break;
+    case 'intro': OS_INTRO.play(); break;
     case 'soon': toast(b.dataset.msg || '준비 중인 기능이에요.'); break;
   }
 });

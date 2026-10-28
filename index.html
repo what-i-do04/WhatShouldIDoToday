@@ -6,7 +6,8 @@
 <title>OTHER SPACE — Beyond the Ordinary.</title>
 <meta name="description" content="OTHER SPACE는 패션, 그래픽 디자인, 사진, 일러스트레이션, 디지털 아트를 온라인 전시로 경험하는 디지털 미술관입니다.">
 <meta name="theme-color" content="#111111">
-<!-- ver 0.1.0 : 「오늘 뭐 하지?」에서 OTHER SPACE 디지털 미술관 프로토타입으로 전환. HOME 제작, 나머지 페이지는 안내 화면 -->
+<!-- ver 0.1.1 : 로그인·회원가입(감상/창작자 회원 선택)·비밀번호 재설정·접근 권한 안내, 데모 계정
+     ver 0.1.0 : 「오늘 뭐 하지?」에서 OTHER SPACE 디지털 미술관 프로토타입으로 전환. HOME 제작, 나머지 페이지는 안내 화면 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
@@ -254,6 +255,92 @@ a:hover .fig svg{transform:scale(1.035)}
 .stub .ctx{display:flex;gap:24px;align-items:center;margin-top:8px}
 .stub .ctx .fig{width:120px;flex:none}
 
+/* ───────── ACCOUNT MENU ───────── */
+.acct{position:relative}
+.demo-tag{font-size:9px;letter-spacing:.14em;border:1px solid var(--grey);color:var(--grey);padding:1px 5px;margin-left:2px}
+.acct-pop{position:absolute;right:0;top:calc(100% + 10px);min-width:240px;background:var(--obsidian);border:1px solid var(--line-dark);padding:8px 0;display:flex;flex-direction:column}
+.acct-pop .who{padding:12px 18px 14px;border-bottom:1px solid var(--line-dark);margin-bottom:6px;display:grid;gap:2px;font-size:13px}
+.acct-pop .who span{color:var(--grey);font-size:12px}
+.acct-pop .who .role{color:var(--paper);margin-top:6px;font-size:11px;letter-spacing:.1em}
+.acct-pop .demo-warn{margin-top:6px;font-size:11px!important}
+.acct-pop a,.acct-pop button{padding:10px 18px;font-size:14px;text-align:left}
+.acct-pop a:hover,.acct-pop button:hover{background:#1c1c1c}
+
+/* ───────── AUTH PAGES ───────── */
+.auth{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.auth-art{position:relative;overflow:hidden;background:#000;padding:140px var(--gut) 56px;display:flex;flex-direction:column;justify-content:flex-end}
+.auth-art .bg{position:absolute;inset:0;opacity:.75}.auth-art .bg svg{width:100%;height:100%}
+.auth-art::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent 60%)}
+.auth-art>*:not(.bg){position:relative;z-index:1}
+.auth-art .display{font-size:clamp(56px,6.4vw,104px)}
+.auth-art p{margin-top:18px;color:rgba(242,240,234,.75);font-size:15px;max-width:26em}
+.auth-form{background:var(--paper);color:var(--obsidian);padding:140px var(--gut) 80px;display:flex;justify-content:center}
+.auth-in{width:100%;max-width:440px}
+.auth-in h1{font-size:28px;font-weight:600;letter-spacing:-.03em}
+.auth-in .lead{margin-top:8px;font-size:15px;color:var(--grey-ink)}
+.steps{display:flex;gap:8px;margin-bottom:28px}
+.steps span{flex:1;padding-top:10px;border-top:2px solid var(--border);font-size:11px;letter-spacing:.14em;color:var(--grey-ink)}
+.steps span.on{border-color:var(--obsidian);color:var(--obsidian)}
+.form{margin-top:36px;display:grid;gap:20px}
+.fld{display:grid;gap:8px}
+.fld>span{font-size:13px;font-weight:600}
+.fld .box{display:flex;align-items:center;border:1px solid var(--border);background:var(--white);transition:border-color .2s}
+.fld .box:focus-within{border-color:var(--obsidian)}
+.fld input{flex:1;min-width:0;height:52px;padding:0 16px;font-size:16px;outline:none;color:var(--obsidian)}
+.fld input::placeholder{color:#9b9b95}
+.fld .eye{padding:0 14px;height:52px;font-size:12px;color:var(--grey-ink)}
+.fld small{font-size:12px;color:var(--grey-ink);min-height:0}
+.fld.bad .box{border-color:#8f2d1f}
+.fld.bad small{color:#8f2d1f}
+.fld.ok small{color:var(--obsidian)}
+.btn{height:54px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:600;width:100%;transition:background .2s,opacity .2s}
+.btn.pri{background:var(--obsidian);color:var(--paper)}.btn.pri:hover{background:#2a2a2a}
+.btn.sec{border:1px solid var(--obsidian)}.btn.sec:hover{background:rgba(17,17,17,.05)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px}
+.row a{text-decoration:underline;text-underline-offset:4px}
+.notice{border:1px solid var(--obsidian);padding:14px 16px;font-size:14px;line-height:1.6;display:none}
+.notice.on{display:block}
+.notice.bad{border-color:#8f2d1f;color:#8f2d1f}
+.demo{margin-top:40px;border:1px dashed var(--grey-ink);padding:22px}
+.demo h2{font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
+.demo p{font-size:13px;color:var(--grey-ink);margin:6px 0 16px}
+.demo .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.demo .btn{height:46px;font-size:14px}
+.tag{font-size:10px;font-weight:600;letter-spacing:.14em;border:1px solid currentColor;padding:2px 6px}
+.or{display:flex;align-items:center;gap:14px;margin:28px 0 0;font-size:12px;color:var(--grey-ink)}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--border)}
+/* member type cards */
+.types{margin-top:32px;display:grid;gap:14px}
+.type{display:block;text-align:left;border:1px solid var(--border);background:var(--white);padding:24px;transition:border-color .2s,transform .3s var(--ease)}
+.type:hover{border-color:var(--obsidian)}
+.type[aria-checked="true"]{border-color:var(--obsidian);box-shadow:inset 0 0 0 1px var(--obsidian)}
+.type .hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.type .k{font-size:20px;font-weight:600;letter-spacing:-.02em}
+.type .e{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--grey-ink)}
+.type .ld{font-size:14px;color:var(--grey-ink);margin-top:6px}
+.type ul{list-style:none;margin-top:16px;display:grid;gap:6px;font-size:14px}
+.type li{display:flex;gap:10px}.type li::before{content:"—";color:var(--grey-ink)}
+.type li.plus{font-weight:600}
+.type .radio{width:18px;height:18px;border:1px solid var(--obsidian);border-radius:50%;display:inline-grid;place-items:center;flex:none}
+.type[aria-checked="true"] .radio::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--obsidian)}
+.chosen{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);padding:12px 16px;font-size:14px;background:var(--white)}
+.chosen a{font-size:13px;text-decoration:underline;text-underline-offset:4px}
+/* terms */
+.terms{border:1px solid var(--border);background:var(--white)}
+.terms label{display:flex;gap:12px;align-items:center;padding:14px 16px;font-size:14px;cursor:pointer}
+.terms label.all{border-bottom:1px solid var(--border);font-weight:600}
+.terms input{width:18px;height:18px;accent-color:var(--obsidian);flex:none}
+.terms details{padding:0 16px 12px 46px;font-size:12px;color:var(--grey-ink)}
+.terms summary{cursor:pointer;width:max-content}
+.terms details p{margin-top:6px;line-height:1.6}
+.done-mark{font-family:var(--serif);font-weight:300;font-size:72px;line-height:1}
+@media (max-width:900px){
+  .auth{grid-template-columns:1fr}
+  .auth-art{min-height:auto;padding:110px var(--gut) 36px}
+  .auth-art .display{font-size:56px}
+  .auth-form{padding:48px var(--gut) 72px}
+}
+
 /* toast */
 .toast{position:fixed;left:50%;bottom:28px;z-index:90;transform:translate(-50%,20px);opacity:0;background:var(--paper);color:var(--obsidian);font-size:13px;padding:12px 20px;max-width:calc(100% - 32px);text-align:center;transition:opacity .3s,transform .4s var(--ease);pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -278,22 +365,49 @@ a:hover .fig svg{transform:scale(1.035)}
 
 <script>
 /* =========================================================
-   OTHER SPACE — prototype v0.1.0
+   OTHER SPACE — prototype v0.1.1
    - 프레임워크 없이 index.html 한 파일 (기존 프로젝트 구조 유지)
    - 해시 라우팅: #/ , #/exhibitions , #/exhibitions/:id , #/gallery , #/works/:id ...
    - 데이터는 아래 DEMO 객체(가상 데이터). 나중에 Supabase 테이블로 옮길 때
      같은 필드 이름을 그대로 컬럼으로 쓸 수 있게 맞춰 둠.
    ========================================================= */
 
-/* ───── 회원 권한 (가정: 아직 확정 전, 확정되면 교체) ───── */
+/* ───── 회원 권한 ─────
+   viewer / creator 는 회원가입에서 선택. admin 은 운영자(가입 화면에서 선택 불가).
+   권한 확인은 can(권한) 하나로만 하도록 해서, 나중에 DB의 role 컬럼과 바로 연결 */
 var ROLES={
-  guest:  {label:'방문자', can:['view']},
-  member: {label:'일반 회원', can:['view','save','comment']},
-  creator:{label:'창작자', can:['view','save','comment','upload']},
-  artist: {label:'초대 작가', can:['view','save','comment','upload','exhibit']},
-  admin:  {label:'운영자', can:['*']}
+  guest:  {ko:'방문자',    en:'Guest',   can:['view']},
+  viewer: {ko:'감상 회원', en:'Viewer',  can:['view','comment','follow','save','profile']},
+  creator:{ko:'창작자 회원',en:'Creator', can:['view','comment','follow','save','profile','upload','edit_own','delete_own','archive_own','creator_profile']},
+  admin:  {ko:'운영자',    en:'Admin',   can:['*']}
 };
-var session={user:null, role:'guest'}; // 프로토타입: 실제 로그인 없음
+var ROLE_INFO={ // 가입 화면 설명용
+  viewer:{lead:'전시와 작품을 감상하고 마음에 드는 것을 모아요.',items:['공개 전시 및 작품 감상','댓글','팔로우','저장','프로필 관리']},
+  creator:{lead:'감상하는 것은 물론, 내 작품을 오픈 갤러리에 공개해요.',items:['감상 회원의 모든 기능','작품 업로드','본인 작품 수정 및 삭제','본인 작품 보관 처리','창작자 프로필 관리']}
+};
+function can(perm){var r=ROLES[session.user?session.user.role:'guest'].can;return r.indexOf('*')>-1||r.indexOf(perm)>-1}
+
+/* ───── 인증 어댑터 ─────
+   화면은 Auth.signIn / signUp / resetPassword / signOut 만 부른다.
+   지금은 DemoAuth(실제 인증 아님). 나중에 같은 이름의 함수를 Supabase 버전으로 바꾸면 화면 코드는 그대로.
+   예) signIn: sb.auth.signInWithPassword({email,password})
+       signUp: sb.auth.signUp({email,password,options:{data:{nickname,role}}})
+       resetPassword: sb.auth.resetPasswordForEmail(email) */
+var session={user:null}; // user: {email, nickname, role, demo}
+var DEMO_ACCOUNTS={
+  viewer:{email:'viewer@demo.otherspace',nickname:'감상하는 사람',role:'viewer',demo:true},
+  creator:{email:'creator@demo.otherspace',nickname:'윤다해',role:'creator',demo:true,creatorId:'yoon-dahae'}
+};
+var Auth={
+  real:false,
+  signIn:function(email,password){return Promise.reject({code:'not_connected'})},
+  signUp:function(form){return Promise.reject({code:'not_connected'})},
+  resetPassword:function(email){return Promise.reject({code:'not_connected'})},
+  demoSignIn:function(type){session.user=Object.assign({},DEMO_ACCOUNTS[type]);saveSession();return Promise.resolve(session.user)},
+  signOut:function(){session.user=null;saveSession();return Promise.resolve()}
+};
+function saveSession(){try{session.user?sessionStorage.setItem('os-demo',JSON.stringify(session.user)):sessionStorage.removeItem('os-demo')}catch(e){}}
+try{var _s=JSON.parse(sessionStorage.getItem('os-demo')||'null');if(_s&&_s.demo)session.user=_s}catch(e){}
 
 /* ───── 데이터 모델 (가상 데모 데이터) ───── */
 var THEMES=[
@@ -451,20 +565,25 @@ function Header(){
   '<div class="tools">'+
     '<button class="tool" data-act="search" aria-label="검색">'+IC.search+'</button>'+
     '<button class="tool lang" data-act="lang" aria-label="언어 전환 (현재 한국어)"><b>KO</b><i>/</i><i>EN</i></button>'+
-    '<a class="tool login" href="#/login">로그인</a>'+
+    Account()+
     '<button class="tool burger" data-act="menu" aria-label="메뉴 열기" aria-expanded="false">'+IC.menu+'</button>'+
   '</div></div>'}
+function Account(){var u=session.user;
+  if(!u)return '<a class="tool login" href="#/login">로그인</a>';
+  return '<div class="acct"><button class="tool login" data-act="acct" aria-haspopup="true" aria-expanded="false">'+esc(u.nickname)+(u.demo?' <span class="demo-tag">DEMO</span>':'')+'</button>'+
+  '<div class="acct-pop" id="acctPop" hidden><div class="who"><b>'+esc(u.nickname)+'</b><span>'+esc(u.email)+'</span><span class="role">'+ROLES[u.role].ko+' · '+ROLES[u.role].en+'</span>'+(u.demo?'<span class="demo-warn">데모 계정 · 실제 인증 아님</span>':'')+'</div>'+
+  '<a href="#/mypage">마이페이지</a>'+(can('upload')?'<a href="#/upload">작품 올리기</a>':'')+(can('*')?'<a href="#/admin">운영자 대시보드</a>':'')+'<button data-act="logout">로그아웃</button></div></div>'}
 function Menu(){
   return '<div class="menu-top">'+Logo({slogan:false})+'<button class="tool" data-act="menu-close" aria-label="메뉴 닫기">'+IC.close+'</button></div>'+
   '<nav aria-label="전체 메뉴">'+NAV.concat([{to:'#/artists',t:'ARTISTS',ko:'창작자'},{to:'#/about',t:'ABOUT',ko:'소개'}]).map(function(n){return '<a href="'+n.to+'">'+n.t.toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase()})+'<small>'+n.ko+'</small></a>'}).join('')+'</nav>'+
-  '<div class="menu-foot"><button class="tool" data-act="search">'+IC.search+' 검색</button><button class="tool lang" data-act="lang"><b>KO</b><i>/</i><i>EN</i></button><a class="tool" href="#/login">로그인</a><a class="tool" href="#/signup">회원가입</a></div>'}
+  '<div class="menu-foot"><button class="tool" data-act="search">'+IC.search+' 검색</button><button class="tool lang" data-act="lang"><b>KO</b><i>/</i><i>EN</i></button>'+(session.user?'<a class="tool" href="#/mypage">마이페이지'+(session.user.demo?' · DEMO':'')+'</a><button class="tool" data-act="logout">로그아웃</button>':'<a class="tool" href="#/login">로그인</a><a class="tool" href="#/signup">회원가입</a>')+'</div>'}
 function Footer(){
   return '<div class="wrap"><div class="fgrid">'+
   '<div>'+Logo({lg:true})+'<p class="about">패션, 그래픽 디자인, 사진, 일러스트레이션, 디지털 아트를 온라인 전시로 경험하는 디지털 미술관.</p></div>'+
   '<div><h4 class="label muted">Visit</h4><ul><li><a href="#/exhibitions">전시</a></li><li><a href="#/gallery">오픈 갤러리</a></li><li><a href="#/artists">창작자</a></li><li><a href="#/archive">아카이브</a></li></ul></div>'+
   '<div><h4 class="label muted">Participate</h4><ul><li><a href="#/upload">작품 올리기</a></li><li><a href="#/signup">회원가입</a></li><li><a href="#/login">로그인</a></li><li><a href="#/mypage">마이페이지</a></li></ul></div>'+
   '<div><h4 class="label muted">Info</h4><ul><li><a href="#/about">OTHER SPACE 소개</a></li><li><a href="#/admin">운영자</a></li></ul></div>'+
-  '</div><div class="fbot"><span>© 2026 OTHER SPACE</span><span class="demo-note">프로토타입 v0.1.0 · 전시, 작가, 작품은 모두 가상 데모 데이터이며 이미지는 자동 생성된 자리표시 그림이에요</span></div></div>'}
+  '</div><div class="fbot"><span>© 2026 OTHER SPACE</span><span class="demo-note">프로토타입 v0.1.1 · 전시, 작가, 작품은 모두 가상 데모 데이터이며 이미지는 자동 생성된 자리표시 그림이에요</span></div></div>'}
 
 function ExhibitionCard(e,cls,ratio){var t=themeOf(e.theme),a=e.artists.map(function(id){return creatorOf(id).name}).join(', ');
   return '<a class="rv '+(cls||'')+'" href="#/exhibitions/'+e.id+'"><div class="fig '+(ratio||'ratio-45')+'">'+art(e.art,ratio=='ratio-32'?600:400,ratio=='ratio-32'?400:500)+'</div>'+
@@ -530,8 +649,6 @@ var PAGES={
   artist:{en:'Artist',ko:'창작자 프로필',will:['작가 소개와 대표 작품','참여한 전시','공개 작품 목록']},
   archive:{en:'Archive',ko:'아카이브',will:['연도별 지난 전시','지난 전시의 작품과 기획 글']},
   about:{en:'About',ko:'OTHER SPACE 소개',will:['미션과 다섯 가지 핵심 가치','운영 방식과 참여 방법']},
-  login:{en:'Log in',ko:'로그인',will:['이메일 로그인','비밀번호 재설정 안내']},
-  signup:{en:'Sign up',ko:'회원가입',will:['회원 유형 선택','이메일 가입']},
   mypage:{en:'My Page',ko:'마이페이지',will:['저장한 작품과 전시','내가 남긴 감상','창작자라면 내 작품 관리']},
   admin:{en:'Dashboard',ko:'운영자 대시보드',will:['전시와 작품 관리','작품 검토와 신고 처리','회원 권한 관리']}
 };
@@ -540,11 +657,59 @@ function Stub(key,item){var p=PAGES[key];
   if(item){var sub=item.ko||(item.creator?creatorOf(item.creator).name:item.en)||'';
     ctx='<div class="ctx"><div class="fig ratio-11">'+art(item.art,200,200)+'</div><div><div class="label muted">선택한 항목</div><div style="font-family:var(--serif);font-size:28px;line-height:1.1;margin-top:6px">'+esc(item.title||item.name)+'</div><div class="muted" style="font-size:14px">'+esc(sub)+'</div></div></div>'}
   return '<section class="stub"><div class="wrap"><span class="label muted">'+p.ko+' · 준비 중</span><h1 class="display">'+p.en+'</h1>'+ctx+
-  '<div class="box"><h2>이 페이지는 아직 제작 전이에요.</h2><p class="muted" style="font-size:14px;margin-bottom:14px">이번 프로토타입은 HOME만 완성된 상태예요. 이 화면에는 다음 단계에서 아래 내용이 들어갈 예정이에요.</p><ul>'+p.will.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'+
+  '<div class="box"><h2>이 페이지는 아직 제작 전이에요.</h2><p class="muted" style="font-size:14px;margin-bottom:14px">지금 프로토타입에서는 HOME과 로그인·회원가입 화면까지 만들어져 있어요. 이 화면에는 다음 단계에서 아래 내용이 들어갈 예정이에요.</p><ul>'+p.will.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'+
   '<div class="acts"><a class="link" href="#/">HOME으로 <span class="ar">→</span></a><a class="link" href="javascript:history.back()">이전 화면 <span class="ar">←</span></a></div></div></section>'}
+/* ───── 로그인 · 회원가입 · 비밀번호 재설정 ───── */
+function AuthShell(o){
+  return '<section class="auth"><div class="auth-art"><div class="bg" aria-hidden="true">'+art(o.art,800,1000)+'</div><span class="label muted">'+o.label+'</span><h1 class="display" style="margin-top:16px">'+o.title+'</h1><p>'+o.sub+'</p></div>'+
+  '<div class="auth-form"><div class="auth-in">'+o.body+'</div></div></section>'}
+function Field(id,label,type,ph,hint,auto,extra){
+  return '<label class="fld" id="f-'+id+'"><span>'+label+'</span><span class="box"><input id="'+id+'" name="'+id+'" type="'+type+'" placeholder="'+ph+'" autocomplete="'+auto+'" '+(extra||'')+'>'+(type=='password'?'<button type="button" class="eye" data-act="eye" data-for="'+id+'" aria-label="비밀번호 보기">보기</button>':'')+'</span><small>'+(hint||'')+'</small></label>'}
+function DemoBox(){
+  return '<div class="demo"><h2><span class="tag">DEMO</span> 데모 계정으로 둘러보기</h2><p>실제 인증이 아니에요. 버튼을 누르면 이 브라우저 탭에서만 로그인한 것처럼 보이고, 탭을 닫으면 사라져요.</p>'+
+  '<div class="two"><button type="button" class="btn sec" data-act="demo" data-type="viewer">감상 회원으로</button><button type="button" class="btn sec" data-act="demo" data-type="creator">창작자 회원으로</button></div></div>'}
+function Login(){
+  return AuthShell({art:{s:'figure',seed:7},label:'Log in',title:'Welcome<br>Back',sub:'다시 OTHER SPACE로 들어오세요. 저장한 작품과 팔로우한 창작자가 기다리고 있어요.',body:
+  '<h1>로그인</h1><p class="lead">이메일과 비밀번호를 입력해 주세요.</p>'+
+  '<form class="form" id="loginForm" novalidate>'+Field('email','이메일','email','you@example.com','','email')+Field('password','비밀번호','password','비밀번호','','current-password')+
+  '<div class="notice" id="loginMsg" role="alert"></div><button class="btn pri" type="submit">로그인</button>'+
+  '<div class="row"><a href="#/reset">비밀번호를 잊으셨나요?</a><span>처음이신가요? <a href="#/signup">회원가입</a></span></div></form>'+DemoBox()})}
+function SignupType(sel){
+  return AuthShell({art:{s:'lines',seed:3},label:'Join · Step 1 of 2',title:'Join<br>Other Space',sub:'감상하는 사람도, 만드는 사람도. 어떤 방식으로 함께할지 먼저 골라주세요. 가입한 뒤에도 감상 회원에서 창작자 회원으로 바꿀 수 있어요.',body:
+  '<div class="steps"><span class="on">01 회원 유형</span><span>02 정보 입력</span></div><h1>회원 유형 선택</h1><p class="lead">두 유형의 차이를 확인하고 하나를 선택해 주세요.</p>'+
+  '<div class="types" role="radiogroup" aria-label="회원 유형">'+['viewer','creator'].map(function(k){var R=ROLES[k],I=ROLE_INFO[k];
+    return '<button type="button" class="type" role="radio" aria-checked="'+(sel==k)+'" data-act="pick-type" data-type="'+k+'"><span class="hd"><span><span class="k">'+(k=='viewer'?'A. ':'B. ')+R.ko+'</span> <span class="e">'+R.en+'</span></span><span class="radio"></span></span><p class="ld">'+I.lead+'</p><ul>'+I.items.map(function(x,i){return '<li class="'+(k=='creator'&&i>0?'plus':'')+'">'+x+'</li>'}).join('')+'</ul></button>'}).join('')+'</div>'+
+  '<div class="form"><button class="btn pri" data-act="type-next" '+(sel?'':'disabled')+'>'+(sel?ROLES[sel].ko+'으로 계속하기':'회원 유형을 선택해 주세요')+'</button><div class="row"><span>이미 계정이 있나요? <a href="#/login">로그인</a></span></div></div>'})}
+function SignupForm(role){
+  return AuthShell({art:{s:role=='creator'?'blocks':'rings',seed:41},label:'Join · Step 2 of 2',title:role=='creator'?'Show<br>Your Work':'Find<br>Your Space',sub:role=='creator'?'창작자 회원은 오픈 갤러리에 작품을 공개하고, 자신의 작품을 직접 관리할 수 있어요.':'감상 회원은 전시와 작품을 감상하고, 댓글과 저장, 팔로우로 취향을 모아갈 수 있어요.',body:
+  '<div class="steps"><span class="on">01 회원 유형</span><span class="on">02 정보 입력</span></div><h1>정보 입력</h1>'+
+  '<form class="form" id="signupForm" novalidate><div class="chosen"><span>선택한 유형 · <b>'+ROLES[role].ko+'</b> '+ROLES[role].en+'</span><a href="#/signup">변경</a></div><input type="hidden" name="role" value="'+role+'">'+
+  Field('email','이메일','email','you@example.com','로그인할 때 사용해요.','email')+
+  Field('password','비밀번호','password','8자 이상, 영문과 숫자 포함','8자 이상, 영문과 숫자를 함께 써주세요.','new-password')+
+  Field('password2','비밀번호 확인','password','비밀번호를 한 번 더 입력','','new-password')+
+  Field('nickname','닉네임','text',role=='creator'?'작품과 함께 표시될 이름':'다른 사람에게 보이는 이름','2~20자. 다른 회원에게 보여요.','nickname','maxlength="20"')+
+  '<div class="fld" id="f-terms"><span>약관 동의</span><div class="terms"><label class="all"><input type="checkbox" id="tAll"> 필수 약관 전체 동의</label>'+
+  '<label><input type="checkbox" class="tReq" name="terms_service"> [필수] 이용약관 동의</label><details><summary>내용 보기</summary><p>프로토타입용 예시 문구예요. 실제 이용약관은 서비스 오픈 전에 확정돼요.</p></details>'+
+  '<label><input type="checkbox" class="tReq" name="terms_privacy"> [필수] 개인정보 수집 및 이용 동의</label><details><summary>내용 보기</summary><p>수집 항목: 이메일, 닉네임. 이용 목적: 회원 식별과 서비스 제공. 프로토타입용 예시 문구예요.</p></details></div><small></small></div>'+
+  '<div class="notice" id="signupMsg" role="alert"></div><button class="btn pri" type="submit">가입하기</button><div class="row"><span>이미 계정이 있나요? <a href="#/login">로그인</a></span></div></form>'})}
+function SignupDone(role,nick){
+  return AuthShell({art:{s:'particles',seed:71},label:'Join · Prototype',title:'Almost<br>There',sub:'실제 서비스에서는 이 단계에서 계정이 만들어지고 인증 메일이 발송돼요.',body:
+  '<div class="done-mark">✓</div><h1 style="margin-top:20px">입력 확인이 끝났어요, '+esc(nick)+'님</h1><p class="lead">모든 항목이 형식 검사를 통과했어요.</p>'+
+  '<div class="notice on" style="margin-top:28px"><b>프로토타입이라 실제 계정은 만들어지지 않았어요.</b><br>입력하신 이메일과 비밀번호는 어디에도 저장되거나 전송되지 않았어요.</div>'+
+  '<div class="form"><button class="btn pri" data-act="demo" data-type="'+role+'">'+ROLES[role].ko+' 데모 계정으로 둘러보기</button><a class="btn sec" href="#/">HOME으로</a></div>'})}
+function Reset(){
+  return AuthShell({art:{s:'rings',seed:107},label:'Reset Password',title:'Find<br>Your Way',sub:'가입한 이메일을 알려주시면 비밀번호를 다시 정할 수 있는 링크를 보내드려요.',body:
+  '<h1>비밀번호 재설정</h1><p class="lead">가입할 때 사용한 이메일을 입력해 주세요.</p>'+
+  '<form class="form" id="resetForm" novalidate>'+Field('email','이메일','email','you@example.com','','email')+
+  '<div class="notice" id="resetMsg" role="status"></div><button class="btn pri" type="submit">재설정 링크 받기</button><div class="row"><a href="#/login">로그인으로 돌아가기</a></div></form>'})}
+function Denied(need){var u=session.user,msg=!u?'로그인한 회원만 볼 수 있는 페이지예요.':need=='upload'?'작품 업로드는 창작자 회원만 할 수 있어요. 지금은 '+ROLES[u.role].ko+'으로 로그인되어 있어요.':'운영자만 볼 수 있는 페이지예요.';
+  return '<section class="stub"><div class="wrap"><span class="label muted">접근 권한 안내</span><h1 class="display">Members<br>Only</h1><p style="max-width:32em;font-size:16px">'+msg+'</p><div class="acts">'+(!u?'<a class="link" href="#/login">로그인 <span class="ar">→</span></a><a class="link" href="#/signup">회원가입 <span class="ar">→</span></a>':'<a class="link" href="#/">HOME으로 <span class="ar">→</span></a>')+'</div></div></section>'}
+
 function NotFound(){return '<section class="stub"><div class="wrap"><span class="label muted">404 · 페이지를 찾을 수 없어요</span><h1 class="display">Somewhere<br>Else</h1><p class="muted" style="max-width:30em">주소가 바뀌었거나 없는 페이지예요. 다른 공간으로 이동해 보세요.</p><div class="acts"><a class="link" href="#/">HOME으로 <span class="ar">→</span></a></div></div></section>'}
 
 /* ───── 라우터 ───── */
+var signupRole=null,authBack='#/';
+function chrome(){$('#hdr').innerHTML=Header();$('#menu').innerHTML=Menu()}
 function route(){
   var hash=location.hash.replace(/^#/,'')||'/',path=hash.split('?')[0],seg=path.split('/').filter(Boolean),html,item=null;
   if(hash.charAt(0)!=='/'){return} // #main 같은 페이지 내 앵커
@@ -554,6 +719,13 @@ function route(){
   else if(seg[0]=='archive'&&seg[1]){item=byId(EXHIBITIONS,seg[1]);html=item?Stub('archive',item):NotFound()}
   else if(seg[0]=='works'&&seg[1]){item=byId(WORKS,seg[1]);html=item?Stub('work',item):NotFound()}
   else if(seg[0]=='artists'&&seg[1]){item=byId(CREATORS,seg[1]);html=item?Stub('artist',item):NotFound()}
+  else if(seg[0]=='login'&&!seg[1])html=Login();
+  else if(seg[0]=='reset'&&!seg[1])html=Reset();
+  else if(seg[0]=='signup'&&!seg[1])html=SignupType(signupRole);
+  else if(seg[0]=='signup'&&ROLE_INFO[seg[1]]&&!seg[2]){signupRole=seg[1];html=SignupForm(seg[1])}
+  else if(seg[0]=='mypage'&&!seg[1])html=can('profile')?Stub('mypage'):Denied('profile');
+  else if(seg[0]=='upload'&&!seg[1])html=can('upload')?Stub('upload'):Denied('upload');
+  else if(seg[0]=='admin'&&!seg[1])html=can('*')?Stub('admin'):Denied('admin');
   else if(PAGES[seg[0]]&&!seg[1])html=Stub(seg[0]);
   else html=NotFound();
   $('#main').innerHTML=html;
@@ -562,7 +734,8 @@ function route(){
   closeMenu();closeSearch();
   window.scrollTo(0,0);
   $('#hdr').classList.toggle('solid',!!seg.length||scrollY>40);
-  document.title=seg.length?((PAGES[seg[0]]||{en:'Not Found'}).en+' — OTHER SPACE'):'OTHER SPACE — Beyond the Ordinary.';
+  var TT={login:'Log in',signup:'Sign up',reset:'Reset Password'};
+  document.title=seg.length?((TT[seg[0]]?{en:TT[seg[0]]}:PAGES[seg[0]]||{en:'Not Found'}).en+' — OTHER SPACE'):'OTHER SPACE — Beyond the Ordinary.';
   if(!seg.length)startHero();
   reveal();
 }
@@ -603,6 +776,12 @@ function reveal(){$$('.rv:not(.in)').forEach(function(el){io?io.observe(el):el.c
 document.addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;var a=b.dataset.act;
   if(a=='menu')openMenu();else if(a=='menu-close')closeMenu();
   else if(a=='search')openSearch();else if(a=='search-close')closeSearch();
+  else if(a=='acct'){var pop=$('#acctPop'),o=pop.hidden;pop.hidden=!o;b.setAttribute('aria-expanded',o)}
+  else if(a=='logout'){Auth.signOut().then(function(){chrome();route();toast('로그아웃했어요.')})}
+  else if(a=='demo'){Auth.demoSignIn(b.dataset.type).then(function(u){chrome();location.hash=authBack&&!/login|signup|reset/.test(authBack)?authBack:'#/';route();toast(ROLES[u.role].ko+' 데모 계정으로 둘러보는 중이에요. 실제 인증이 아니에요.')})}
+  else if(a=='eye'){var inp=$('#'+b.dataset.for),show=inp.type=='password';inp.type=show?'text':'password';b.textContent=show?'숨기기':'보기';b.setAttribute('aria-label',show?'비밀번호 숨기기':'비밀번호 보기')}
+  else if(a=='pick-type'){signupRole=b.dataset.type;$('#main').innerHTML=SignupType(signupRole);var c=$('[data-type="'+signupRole+'"].type');if(c)c.focus()}
+  else if(a=='type-next'){if(signupRole)location.hash='#/signup/'+signupRole}
   else if(a=='lang')toast('지금은 한국어만 지원해요. 영어 버전은 준비 중이에요.');
   else if(a=='hprev'||a=='hnext'){var restart=!!htimer;stopHero();if(restart&&!reduce)htimer=setInterval(function(){heroGo(hi+1)},7000);heroGo(hi+(a=='hnext'?1:-1))}
   else if(a=='sprev'||a=='snext'){var s=$('#strip'),c=s.querySelector('a');s.scrollBy({left:(a=='snext'?1:-1)*(c?c.offsetWidth+24:300),behavior:reduce?'auto':'smooth'})}
@@ -611,10 +790,44 @@ document.addEventListener('keydown',function(e){if(e.key=='Escape'){closeMenu();
   if(e.key=='/'&&!/input|textarea/i.test(document.activeElement.tagName)){e.preventDefault();openSearch()}});
 document.addEventListener('visibilitychange',function(){if(!$('#hero'))return;if(document.hidden)stopHero();else startHero()});
 addEventListener('scroll',function(){var home=!location.hash||location.hash=='#/'||location.hash=='#';$('#hdr').classList.toggle('solid',!home||scrollY>40)},{passive:true});
-addEventListener('hashchange',route);
+addEventListener('hashchange',function(e){var o=(e.oldURL||'').split('#')[1];if(o&&!/^\/(login|signup|reset)/.test(o))authBack='#'+o;route()});
+document.addEventListener('click',function(e){var p=$('#acctPop');if(p&&!p.hidden&&!e.target.closest('.acct')){p.hidden=true;var t=$('[data-act="acct"]');if(t)t.setAttribute('aria-expanded','false')}});
+
+/* ───── 폼 검증 · 제출 ───── */
+var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function mark(id,msg,ok){var f=$('#f-'+id);if(!f)return;f.classList.toggle('bad',!!msg&&!ok);f.classList.toggle('ok',!!ok);var sm=$('small',f);if(sm){if(sm.dataset.hint===undefined)sm.dataset.hint=sm.textContent;sm.textContent=msg||sm.dataset.hint}}
+function note(id,msg,bad){var n=$('#'+id);n.innerHTML=msg;n.classList.toggle('on',!!msg);n.classList.toggle('bad',!!bad)}
+document.addEventListener('submit',function(e){var f=e.target;e.preventDefault();
+  var v=function(n){var i=f.querySelector('[name="'+n+'"]');return i?i.value.trim():''},ok=true,first=null;
+  function bad(id,m){mark(id,m);ok=false;first=first||id}
+  if(f.id=='loginForm'){mark('email');mark('password');note('loginMsg','');
+    if(!EMAIL.test(v('email')))bad('email','이메일 형식을 확인해 주세요.');
+    if(!f.password.value)bad('password','비밀번호를 입력해 주세요.');
+    if(!ok)return $('#'+first).focus();
+    Auth.signIn(v('email'),f.password.value).catch(function(){note('loginMsg','<b>프로토타입에서는 실제 로그인이 연결되어 있지 않아요.</b><br>아래 데모 계정으로 회원 화면을 둘러볼 수 있어요.')})}
+  if(f.id=='signupForm'){['email','password','password2','nickname','terms'].forEach(function(i){mark(i)});note('signupMsg','');
+    var pw=f.password.value;
+    if(!EMAIL.test(v('email')))bad('email','이메일 형식을 확인해 주세요.');
+    if(pw.length<8||!/[A-Za-z]/.test(pw)||!/\d/.test(pw))bad('password','8자 이상, 영문과 숫자를 함께 써주세요.');
+    if(!f.password2.value||f.password2.value!==pw)bad('password2','비밀번호가 서로 달라요.');
+    var nk=v('nickname');if(nk.length<2||nk.length>20)bad('nickname','닉네임은 2~20자로 정해주세요.');
+    if($$('.tReq',f).some(function(c){return !c.checked}))bad('terms','필수 약관에 모두 동의해 주세요.');
+    if(!ok){if(first=='terms')$('#tAll').focus();else $('#'+first).focus();return}
+    var role=v('role');
+    // 실제 연결 시: Auth.signUp({email,password,nickname,role}).then(...)
+    Auth.signUp({email:v('email'),password:pw,nickname:nk,role:role}).catch(function(){$('#main').innerHTML=SignupDone(role,nk);window.scrollTo(0,0)})}
+  if(f.id=='resetForm'){mark('email');
+    if(!EMAIL.test(v('email'))){bad('email','이메일 형식을 확인해 주세요.');return $('#email').focus()}
+    Auth.resetPassword(v('email')).catch(function(){note('resetMsg','<b>데모 화면이라 실제 메일은 발송되지 않아요.</b><br>실제 서비스에서는 '+esc(v('email'))+'로 재설정 링크가 발송돼요.')})}
+});
+document.addEventListener('change',function(e){var t=e.target;
+  if(t.id=='tAll')$$('.tReq').forEach(function(c){c.checked=t.checked});
+  if(t.classList.contains('tReq')){var all=$$('.tReq');$('#tAll').checked=all.every(function(c){return c.checked})}
+  if(t.id=='password2'||t.id=='password'){var a=$('#password'),b=$('#password2');if(a&&b&&b.value)mark('password2',a.value===b.value?'비밀번호가 일치해요.':'비밀번호가 서로 달라요.',a.value===b.value)}
+});
 
 /* ───── 시작 ───── */
-$('#hdr').innerHTML=Header();$('#menu').innerHTML=Menu();$('#search').innerHTML=Search();$('#ftr').innerHTML=Footer();
+chrome();$('#search').innerHTML=Search();$('#ftr').innerHTML=Footer();
 $('#q').addEventListener('input',function(){doSearch(this.value)});
 $('#q').addEventListener('keydown',function(e){if(e.key=='Enter'){var f=$('#sres a');if(f)location.hash=f.getAttribute('href')}});
 route();

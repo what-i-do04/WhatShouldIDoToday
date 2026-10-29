@@ -877,3 +877,17 @@ html.intro-on,html.intro-on body{overflow:hidden}
 .intro-enter:hover{border-color:var(--paper)}
 .intro-enter:focus-visible{outline:1px solid var(--paper);outline-offset:6px}
 @media (prefers-reduced-motion:reduce){.intro-stage i{transition:none}.intro-stage.fade{animation:none;opacity:0;transition:opacity .6s}}
+
+/* v0.3.2 HOME: 맨 끝 SOON 칸 */
+.hsoon{border-top:1px solid var(--line-dark)}
+.hsoon-g{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:clamp(20px,3vw,48px)}
+.hsoon-c{display:flex;flex-direction:column;gap:12px;min-width:0}
+.hsoon-c .soon-img{overflow:hidden;margin-bottom:6px}
+.hsoon-c .soon-img img{transition:transform 1.2s var(--ease)}
+.hsoon-c:hover .soon-img img{transform:scale(1.04)}
+.hsoon-c .ttl{font-family:var(--serif);font-weight:300;font-size:clamp(28px,2.8vw,44px);line-height:1;letter-spacing:-.01em}
+.hsoon-c .ttl.t-italic{font-style:italic}.hsoon-c .ttl.t-sans{font-family:var(--sans);letter-spacing:-.04em}
+.hsoon-c .ko{font-size:14px;color:rgba(242,240,234,.72)}
+.hsoon-end{margin-top:clamp(40px,5vw,72px);display:flex;justify-content:center}
+@media (max-width:860px){.hsoon-g{grid-template-columns:1fr}}
+.hsoon-end .btn{width:auto;padding:0 36px;font-weight:500;letter-spacing:.04em}

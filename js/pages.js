@@ -10,7 +10,8 @@ P.home = function () {
     cur = db.exhibitions.filter(function (e) { return e.status === 'current'; }).slice(0, 4),
     pub = Q.publicWorks().slice().sort(Q.byNew),
     picks = pub.slice().sort(function (a, b) { return Q.saveCount(b.id) - Q.saveCount(a.id) || (a.createdAt < b.createdAt ? 1 : -1); }).slice(0, 8),
-    past = db.exhibitions.filter(function (e) { return e.status === 'past'; }).sort(function (a, b) { return a.startDate < b.startDate ? 1 : -1; }).slice(0, 5);
+    past = db.exhibitions.filter(function (e) { return e.status === 'past'; }).sort(function (a, b) { return a.startDate < b.startDate ? 1 : -1; }).slice(0, 5),
+    up = db.exhibitions.filter(function (e) { return e.status === 'upcoming'; }).sort(function (a, b) { return a.startDate < b.startDate ? -1 : 1; }).slice(0, 3);
   var h = '<section class="hero" id="hero" aria-roledescription="carousel" aria-label="대표 기획 전시">' +
     feat.map(function (e, i) { return '<div class="slide' + (i ? '' : ' on') + '" aria-hidden="' + (i ? 'true' : 'false') + '"><div class="bg">' + Img(e.coverImage, { w: 1600, h: 1000 }) + '</div></div>'; }).join('') +
     '<div class="hero-txt"><div class="wrap">' + feat.map(function (e, i) { var th = e.theme ? Q.theme(e.theme) : null;
@@ -32,6 +33,13 @@ P.home = function () {
   h += '<section class="archive"><div class="bgtype" aria-hidden="true">ARCHIVE</div><div class="wrap"><div class="arc">' +
     '<div class="rv"><span class="label muted">04 — Archive</span><h2 class="h2" style="margin-top:20px">Past Exhibitions</h2><p>막을 내린 전시도 사라지지 않아요. 지난 전시의 작품, 기획 글, 기록을 아카이브에서 다시 볼 수 있어요.</p><a class="link" href="#/archive">아카이브 들어가기 <span class="ar">→</span></a></div>' +
     '<div class="list rv">' + past.map(function (e) { return '<a href="#/exhibitions/' + e.id + '"><span class="y">' + e.startDate.slice(0, 4) + '</span><span class="t">' + esc(e.title) + '</span><span class="k">' + esc(e.subtitle) + (e.theme ? ' · ' + Q.theme(e.theme).en : '') + '</span></a>'; }).join('') + '</div></div></div></section>';
+  /* 맨 끝: 곧 열리는 전시(SOON)로 이어지는 칸. 작품은 보여주지 않고 대표 이미지·오픈일만 */
+  h += '<section class="sec hsoon"><div class="wrap">' + SecHead('05', 'Coming Soon', '공개 예정 전시', '곧 문을 여는 전시의 컨셉과 이야기를 먼저 만나보세요', '<a class="link rv" href="#/soon">SOON 가기 <span class="ar">→</span></a>') +
+    (up.length ? '<div class="hsoon-g" style="--n:' + up.length + '">' + up.map(function (e) { var th = e.theme ? Q.theme(e.theme) : null;
+      return '<a class="hsoon-c rv" href="#/exhibitions/' + e.id + '"><span class="soon-img">' + Img(e.coverImage, { w: 900, h: 600, ratio: '3/2', alt: '' }) + '<span class="dday">' + dday(e.startDate) + '</span></span>' +
+        '<span class="label muted">' + dot(e.startDate) + ' 오픈' + (th ? ' · ' + th.en : '') + '</span><span class="ttl t-' + e.type + '">' + esc(e.title) + '</span><span class="ko">' + esc(e.subtitle) + '</span></a>'; }).join('') + '</div>'
+      : EmptyState('공개 예정 전시가 없어요', '새 전시가 정해지면 SOON에서 소개할게요.')) +
+    '<div class="hsoon-end rv"><a class="btn ghost" href="#/soon">공개 예정 전시 모두 보기 <span class="ar">→</span></a></div></div></section>';
   return h;
 };
 
